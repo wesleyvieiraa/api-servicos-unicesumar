@@ -1,19 +1,21 @@
-
-# 🚀 Back da Aplicação ServiceHub
+# 🚀 Backend da Aplicação Mão Amiga
 
 Bem-vindo ao backend da nossa aplicação! Este projeto foi desenvolvido utilizando **Node.js** e segue um padrão arquitetural baseado em uma variação de **MVC**.
+
+![Node.js](https://img.shields.io/badge/Node.js-20.15.0-339933?style=for-the-badge&logo=node.js)
+![Postgres](https://img.shields.io/badge/Postgres-16.0-336791?style=for-the-badge&logo=postgresql)
 
 
 ## 🛠️ Tecnologias utilizadas
 
-**[Node.js]([https://nodejs.org/download/release/v20.15.0/](https://nodejs.org/docs/latest/api/)):** v20.15.0<br>
-**[Express](https://expressjs.com/pt-br/)**<br>
-**[Compression](https://www.npmjs.com/package/compression)**<br>
-**[Cors](https://www.npmjs.com/package/cors)**<br>
-**[Dotenv](https://www.npmjs.com/package/dotenv)**<br>
-**[Swagger](https://swagger.io/docs/)**<br>
-**[Winston](https://github.com/winstonjs/winston/tree/2.x)**<br>
-**[Postgres](https://www.postgresql.org/docs/)**
+- **[Node.js](https://nodejs.org/download/release/v20.15.0/):** v20.15.0
+- **[Express](https://expressjs.com/pt-br/)**
+- **[Compression](https://www.npmjs.com/package/compression)**
+- **[Cors](https://www.npmjs.com/package/cors)**
+- **[Dotenv](https://www.npmjs.com/package/dotenv)**
+- **[Swagger](https://swagger.io/docs/)**
+- **[Winston](https://github.com/winstonjs/winston/tree/2.x)**
+- **[Postgres](https://www.postgresql.org/docs/)**
 
 
 ## 🚧 Estrutura do Projeto
@@ -52,7 +54,7 @@ Clone o projeto
 Entre no diretório do projeto
 
 ```bash
-  cd api-servicoes-unicesumar/back
+  cd api-servicoes-unicesumar/backend
 ```
 
 Instale as dependências
