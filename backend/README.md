@@ -54,7 +54,7 @@ Clone o projeto
 Entre no diretório do projeto
 
 ```bash
-  cd api-servicoes-unicesumar/backend
+  cd api-servicos-unicesumar/backend
 ```
 
 Instale as dependências

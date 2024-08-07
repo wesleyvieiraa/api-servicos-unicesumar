@@ -35,7 +35,7 @@ git clone git clone https://github.com/wesleyvieiraa/api-servicos-unicesumar.git
 
 ```bash
 # Acesse a pasta do projeto
-cd api-servicoes-unicesumar/frontend
+cd api-servicos-unicesumar/frontend
 ```
 
 ```bash
