@@ -36,10 +36,6 @@ class User {
       this.passwordHash = dto.passwordHash;
     }
     this.additionalPermissions = [];
-
-    if (dto.additionalPermissions) this.fornecedores = dto.additionalPermissions;
-    this.generatePassword = dto.generatePassword || dto.generate_password || dto.password;
-    this.uidNewPassword = dto.uidNewPassword || dto.uid_new_password || null;
   }
 
   encryptPassword(password) {

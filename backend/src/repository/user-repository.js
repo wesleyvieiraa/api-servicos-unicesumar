@@ -129,34 +129,24 @@ class UserRepository {
   async createUser(userDto) {
     try {
     const sql =
-      `INSERT INTO cup.usuario (
+      `INSERT INTO users.user (
+        name, 
+        email,  
         password_hash, 
-        nome, 
-        idcnpj_cpf, 
-        email, cpf,  
-        id_situacao_usuario, 
-        tipo_usuario, 
-        generate_password,
-        uid_new_password
+        active
       ) VALUES (
-        $1, $2, $3, $4, $5, 
-        $6, $7, $8, $9
+        INITCAP($1), $2, $3, $4
       ) 
       RETURNING *;`;
 
       const { rows } = await pool.query(sql, [
-        userDto.passwordHash,
-        userDto.nome,
-        userDto.idcnpj_cpf,
+        userDto.name,
         userDto.email,
-        userDto.cpf,
-        userDto.idSituacaoUsuario,
-        userDto.tipoUsuario,
-        true,
-        userDto.uidNewPassword
+        userDto.passwordHash,
+        true
       ]);
       const user = this.factoryUser(rows, false);
-      return user;
+      return user[0] || null;
     } catch (error) {
       logger.error(`Não foi possível inserir o usuário. ${whereAndStackError(__filename, error)}`);
       throw new Error("Não foi possível inserir este usuário.");
@@ -242,7 +232,7 @@ class UserRepository {
         showHash
       );
 
-      return users[0];
+      return users && users.length > 0 ? users[0] : null;
     } catch (error) {
       logger.error(`Não foi possível encontrar usuario com este email. ${whereAndStackError(__filename, error)}`);
       throw new Error("Não foi possível encontrar usuario com este email.");

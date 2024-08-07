@@ -35,6 +35,9 @@ module.exports = {
       return ret;
     } catch (error) {
       logger.error(`Ocorreu um erro na SQL: ${error.message}`);
+      console.error("*****************************")
+      console.error(sql)
+      console.error("*****************************")
       const errorToThrow = {
         code: error.code,
         msgDb: error.message,

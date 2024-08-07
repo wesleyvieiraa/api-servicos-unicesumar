@@ -27,6 +27,7 @@ class AppController {
   routes() {
     this.express.use("/api/v1", require("./routes/index-routes"));
     this.express.use("/api/v1", require("./routes/login-routes"));
+    this.express.use("/api/v1/user", require("./routes/user-routes"));
   }
 }
 
