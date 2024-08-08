@@ -24,7 +24,7 @@ class HttpService {
 
   get = async (url: string): Promise<any> => await this.request(this.getOptionsConfig("get", url));
 
-  post = async (url: string, data: any): Promise<any> =>
+  post = async (url: string, data: any = {}): Promise<any> =>
     await this.request(this.getOptionsConfig("post", url, data));
 
   put = async (url: string, data: any): Promise<any> =>
