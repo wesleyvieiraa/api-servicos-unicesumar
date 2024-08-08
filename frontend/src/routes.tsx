@@ -24,37 +24,20 @@ import ResetCover from "layouts/authentication/reset-password/cover";
 const routes = [
   {
     type: "collapse",
-    name: "Dashboards",
-    key: "dashboards",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
-    collapse: [
-      {
-        name: "Teste",
-        key: "teste",
-        route: "/dashboards/teste",
-        component: <Teste />,
-      },
-    ],
+    name: "Dashboard",
+    key: "dashboard",
+    icon: <Icon fontSize="small">dashboard</Icon>,
+    route: "/dashboard",
+    component: <Teste />,
+    noCollapse: true,
   },
   {
-    type: "collapse",
-    name: "Autenticação",
-    key: "authentication",
-    icon: <Icon fontSize="medium">content_paste</Icon>,
-    collapse: [
-      {
-        name: "Entrar",
-        key: "sign-in",
-        route: "/authentication/sign-in/illustration",
-        component: <SignInIllustration />,
-      },
-      {
-        name: "Resetar Senha",
-        key: "reset-password",
-        route: "/authentication/reset-password/cover",
-        component: <ResetCover />,
-      },
-    ],
+    type: "auth",
+    name: "Login",
+    key: "login",
+    icon: <Icon fontSize="small">login</Icon>,
+    route: "/auth/login",
+    component: <SignInIllustration />,
   },
 ];
 

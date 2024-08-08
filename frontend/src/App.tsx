@@ -1,4 +1,12 @@
-import { useState, useEffect, useMemo, JSXElementConstructor, Key, ReactElement } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  useContext,
+} from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,11 +22,14 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import routes from "routes";
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, AuthContext } from "context";
 import brandWhite from "assets/images/logo.png";
 import brandDark from "assets/images/logo.png";
+import ProtectedRoute from "examples/ProtectedRoute";
+import SignInIllustration from "layouts/authentication/sign-in/illustration";
 
 export default function App() {
+  const authContext = useContext(AuthContext);
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -78,6 +89,7 @@ export default function App() {
   const getRoutes = (allRoutes: any[]): any =>
     allRoutes.map(
       (route: {
+        type: string;
         collapse: any;
         route: string;
         component: ReactElement<any, string | JSXElementConstructor<any>>;
@@ -87,8 +99,18 @@ export default function App() {
           return getRoutes(route.collapse);
         }
 
-        if (route.route) {
-          return <Route path={route.route} element={route.component} key={route.key} />;
+        if (route.route && route.type !== "auth") {
+          return (
+            <Route
+              path={route.route}
+              element={
+                <ProtectedRoute isAuthenticated={true /* authContext.isAuthenticated */}>
+                  {route.component}
+                </ProtectedRoute>
+              }
+              key={route.key}
+            />
+          );
         }
 
         return null;
@@ -140,7 +162,7 @@ export default function App() {
         {layout === "vr" && <Configurator />}
         <Routes>
           {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboards/teste" />} />
+          <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </ThemeProvider>
     </CacheProvider>
@@ -163,8 +185,9 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
+        <Route path="/auth/login" element={<SignInIllustration />} />
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboards/teste" />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>
   );

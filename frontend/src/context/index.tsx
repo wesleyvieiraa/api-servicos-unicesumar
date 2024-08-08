@@ -2,8 +2,69 @@
   This file is used for controlling the global states of the components,
   you can customize the states for the different components here.
 */
-import { createContext, ReactNode, useContext, useMemo, useReducer } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 const MaterialUI = createContext<any>(null);
+
+export const AuthContext = createContext({
+  isAuthenticated: false,
+  login: (token: string) => {},
+  // register: () => {},
+  logout: () => {},
+});
+
+interface AuthContextType {
+  children: JSX.Element;
+}
+
+const AuthContextProvider = ({ children }: AuthContextType): JSX.Element => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) return;
+
+    setIsAuthenticated(true);
+    navigate(location.pathname);
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
+    setIsAuthenticated(isAuthenticated);
+    navigate(location.pathname);
+  }, [isAuthenticated]);
+
+  const login = (token: string) => {
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
+    navigate("/dashboard");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    navigate("/auth/login");
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 // Setting custom name for the context which is visible on react dev tools
 MaterialUI.displayName = "MaterialUIContext";
@@ -162,6 +223,7 @@ const setDarkMode = (
 ) => dispatch({ type: "DARKMODE", value });
 
 export {
+  AuthContextProvider,
   MaterialUIControllerProvider,
   useMaterialUIController,
   setMiniSidenav,
