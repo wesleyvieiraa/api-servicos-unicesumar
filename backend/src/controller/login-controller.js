@@ -301,7 +301,7 @@ class LoginController {
 
       const token = user.generatePassword ? user.uidNewPassword : authService.generateToken(user);
 
-      logger.info(`Usuário: ${user.idUsuario} Fez login. ${__filename}`);
+      logger.info(`Usuário: ${user.userId} Fez login. ${__filename}`);
       return res.status(200).send({
         auth: true,
         token: token,
@@ -311,7 +311,7 @@ class LoginController {
       logger.error(`Falha ao efetuar login: ${whereAndStackError(__filename, error)}`);
       return res
         .status(401)
-        .send({ errors: [{ msg: "Não foi possível fazer login: " + error.message }] });
+        .send({ errors: [{ msg: error.message }] });
     }
   }
 
