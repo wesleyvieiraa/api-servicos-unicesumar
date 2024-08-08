@@ -9,6 +9,7 @@ const swaggerFile = require('../swagger')
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDOC = require("swagger-jsdoc");
 const path = require('path');
+const bodyParser = require("body-parser");
 
 class AppController {
   constructor() {
@@ -21,6 +22,7 @@ class AppController {
     this.express.use(compression());
     this.express.use(cors());
     this.express.use(express.json());
+    this.express.use(bodyParser.json({ type: "application/vnd.api+json", strict: false }));
     const specs = swaggerJSDOC(swaggerFile);
     this.express.use('/doc', swaggerUI.serve, swaggerUI.setup(specs));
     this.express.use(express.static(path.join(__dirname, '../', 'build')));
