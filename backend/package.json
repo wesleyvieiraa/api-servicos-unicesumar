@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "debug": "node server.js"
+    "debug": "node server.js",
+    "prod": "node server.js",
+    "vercel-build": "npm run prod"
   },
   "keywords": [],
   "author": "Garotos de Programa",
