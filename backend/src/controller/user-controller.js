@@ -6,6 +6,7 @@ const User = require("../model/user-model");
 const { TYPE_USER, TYPE_USER_IDS } = require("../constants/user-constants");
 const UserGroupRepository = require("../repository/user-group-repository");
 const { GROUP } = require("../constants/group-constants");
+const loginController = require("./login-controller");
 
 var self;
 
@@ -71,8 +72,9 @@ class UserController {
       const userDto = new User(req.body);
       const user = await new UserRepository().createUser(userDto);
       await self.associateUserGroup(user.userId, req.body.typeUserId);
+      const token = await loginController.doLogin(req.body.email, req.body.password);
 
-      return res.status(200).send({ msg: "Success."});
+      return res.status(200).send({ msg: "Success.", token });
     } catch (error) {
       logger.error(`Erro ao criar o usuário. ${whereAndStackError(__filename, error)}`);
       return res.status(400).send({ 
