@@ -273,39 +273,11 @@ class LoginController {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const userRepository = new UserRepository();
+      const token = await self.doLogin(req.body.email, req.body.password);
 
-      let user = await userRepository.getUserByEmail(req.body.email, true);
-      let logged = false;
-
-      if (!user) {
-        logger.error("Falha ao efetuar login, usuário desconhecido: ");
-        throw new Error("Usuário ou Senha incorretos.");
-      }
-
-      if (!user.active) {
-        logger.error("Falha ao efetuar login, usuário inativo: " + user);
-        throw new Error("Este usuário não está ativo.");
-      }
-
-      try {
-        logged = await self.authenticate(req, res, user);
-      } catch (errExc) {
-        logger.error("Falha ao efetuar login" + errExc.stack);
-        throw new Error("Erro inesperado.");
-      }
-
-      if (!logged) throw new Error("E-mail ou Senha incorretos.");
-
-      user = await self.loadPermissions(user);
-
-      const token = user.generatePassword ? user.uidNewPassword : authService.generateToken(user);
-
-      logger.info(`Usuário: ${user.userId} Fez login. ${__filename}`);
       return res.status(200).send({
         auth: true,
         token: token,
-        generatePassword: user.generatePassword
       });
     } catch (error) {
       logger.error(`Falha ao efetuar login: ${whereAndStackError(__filename, error)}`);
@@ -325,13 +297,43 @@ class LoginController {
     return user;
   }
 
-  async authenticate(req, res, user) {
+  async authenticate(password, user) {
     try {
-      return user.comparePassword(req.body.password);
+      return user.comparePassword(password);
     } catch (error) {
       logger.error("Falha ao efetuar login" + error.stack);
-      throw "Falha na autenticação do sistema.";
+      throw new Error("Falha na autenticação do sistema.");
     }
+  }
+
+  async doLogin(email, password) {
+    const userRepository = new UserRepository();
+    let user = await userRepository.getUserByEmail(email, true);
+    let logged = false;
+
+    if (!user) {
+      logger.error("Falha ao efetuar login, usuário desconhecido: ");
+      throw new Error("Usuário ou Senha incorretos.");
+    }
+
+    if (!user.active) {
+      logger.error("Falha ao efetuar login, usuário inativo: " + user);
+      throw new Error("Este usuário não está ativo.");
+    }
+
+    try {
+      logged = await self.authenticate(password, user);
+    } catch (errExc) {
+      logger.error("Falha ao efetuar login" + errExc.stack);
+      throw new Error("Erro inesperado.");
+    }
+
+    if (!logged) throw new Error("E-mail ou Senha incorretos.");
+
+    user = await self.loadPermissions(user);
+    logger.info(`Usuário: ${user.userId} Fez login. ${__filename}`);
+
+    return authService.generateToken(user);
   }
 }
 
