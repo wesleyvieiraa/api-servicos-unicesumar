@@ -46,10 +46,10 @@ function Illustration(): JSX.Element {
       return;
     }
 
-    // if (inputs.password.trim().length < 6) {
-    //   setErrors({ ...errors, passwordError: true });
-    //   return;
-    // }
+    if (inputs.password.trim().length < 6) {
+      setErrors({ ...errors, passwordError: true });
+      return;
+    }
 
     const newUser = { email: inputs.email, password: inputs.password };
     addUserHandler(newUser);
@@ -130,7 +130,7 @@ function Illustration(): JSX.Element {
             Não possui uma conta?{" "}
             <MDTypography
               component={Link}
-              to="/authentication/sign-up/cover"
+              to="/auth/sign-up"
               variant="button"
               color="info"
               fontWeight="medium"

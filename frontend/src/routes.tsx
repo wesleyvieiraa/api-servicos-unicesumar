@@ -19,6 +19,7 @@ import Icon from "@mui/material/Icon";
 
 import Teste from "layouts/dashboards/teste";
 import SignInIllustration from "layouts/authentication/sign-in/illustration";
+import SignInCover from "layouts/authentication/sign-up/cover";
 import ResetCover from "layouts/authentication/reset-password/cover";
 
 const routes = [
@@ -35,9 +36,22 @@ const routes = [
     type: "auth",
     name: "Login",
     key: "login",
-    icon: <Icon fontSize="small">login</Icon>,
     route: "/auth/login",
     component: <SignInIllustration />,
+  },
+  {
+    type: "auth",
+    name: "Sign Up",
+    key: "sign-up",
+    route: "/auth/sign-up",
+    component: <SignInCover />,
+  },
+  {
+    type: "auth",
+    name: "Reset",
+    key: "reset",
+    route: "/auth/reset",
+    component: <ResetCover />,
   },
 ];
 

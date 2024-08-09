@@ -7,8 +7,56 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+import { Autocomplete } from "@mui/material";
+import FormField from "layouts/applications/wizard/components/FormField";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import authService from "services/auth-service";
+import { useContext, useState } from "react";
+import { AuthContext } from "context";
 
 function Cover(): JSX.Element {
+  interface FormData {
+    name: string;
+    email: string;
+    password: string;
+    typeUserId: number;
+    acceptTerms: boolean;
+  }
+
+  const authContext = useContext(AuthContext);
+  const [credentialsErros, setCredentialsError] = useState(null);
+  const optionsTypesUser = [
+    { label: "Prestador de serviços", id: 1 },
+    { label: "Tomador de serviços", id: 2 },
+  ];
+  const validationSchema: yup.ObjectSchema<FormData> = yup
+    .object({
+      name: yup.string().required("Campo obrigatório"),
+      email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
+      password: yup.string().required("Campo obrigatório"),
+      typeUserId: yup.number().required("Selecione seu tipo de usuário"),
+      acceptTerms: yup.bool().oneOf([true], "Aceite os termos para continuar"),
+    })
+    .required();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(validationSchema) as any,
+  });
+  const onSubmit = async (data: FormData) => {
+    try {
+      const response = await authService.register(data);
+      authContext.login(response.token);
+    } catch (res: any) {
+      setCredentialsError(res.errors.map((e: { msg: string }) => e.msg).join(", "));
+    }
+  };
+
   return (
     <CoverLayout image={bgImage}>
       <Card>
@@ -24,32 +72,82 @@ function Cover(): JSX.Element {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
+            Junte-se a nós hoje
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
             Digite seu e-mail e senha para se registrar
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" method="POST" onSubmit={handleSubmit(onSubmit)}>
             <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
+              <MDInput
+                type="text"
+                label="Name"
+                variant="standard"
+                fullWidth
+                {...register("name")}
+                error={errors.name}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth />
+              <MDInput
+                type="email"
+                label="E-mail"
+                variant="standard"
+                fullWidth
+                {...register("email")}
+                error={errors.email}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" variant="standard" fullWidth />
+              <MDInput
+                type="password"
+                label="Senha"
+                variant="standard"
+                fullWidth
+                {...register("password")}
+                error={errors.password}
+              />
             </MDBox>
+            <MDBox mb={2}>
+              <Controller
+                name="typeUserId"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Autocomplete
+                    disableClearable
+                    options={optionsTypesUser}
+                    size="small"
+                    renderInput={(params) => (
+                      <FormField
+                        {...params}
+                        label="Tipo de usuário"
+                        placeholder="Selecione"
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                    getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(event, newValue) => onChange(newValue.id)}
+                  />
+                )}
+              />
+            </MDBox>
+            {errors.typeUserId && (
+              <MDTypography variant="caption" color="error" fontWeight="light">
+                {errors.typeUserId.message}
+              </MDTypography>
+            )}
             <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
+              <Checkbox {...register("acceptTerms")} />
               <MDTypography
                 variant="button"
                 fontWeight="regular"
                 color="text"
                 sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
               >
-                &nbsp;&nbsp;I agree the&nbsp;
+                &nbsp;&nbsp;Eu aceito os&nbsp;
               </MDTypography>
               <MDTypography
                 component="a"
@@ -59,26 +157,36 @@ function Cover(): JSX.Element {
                 color="info"
                 textGradient
               >
-                Terms and Conditions
+                Termos e condições
               </MDTypography>
             </MDBox>
+            {errors.acceptTerms && (
+              <MDTypography variant="caption" color="error" fontWeight="light">
+                {errors.acceptTerms.message}
+              </MDTypography>
+            )}
+            {credentialsErros && (
+              <MDTypography variant="caption" color="error" fontWeight="light">
+                {credentialsErros}
+              </MDTypography>
+            )}
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
+                Inscrever-se
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Already have an account?{" "}
+                Já possui uma conta?{" "}
                 <MDTypography
                   component={Link}
-                  to="/authentication/sign-in/cover"
+                  to="/auth/login"
                   variant="button"
                   color="info"
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  Entrar
                 </MDTypography>
               </MDTypography>
             </MDBox>

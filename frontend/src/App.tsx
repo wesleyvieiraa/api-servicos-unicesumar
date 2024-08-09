@@ -27,6 +27,8 @@ import brandWhite from "assets/images/logo.png";
 import brandDark from "assets/images/logo.png";
 import ProtectedRoute from "examples/ProtectedRoute";
 import SignInIllustration from "layouts/authentication/sign-in/illustration";
+import SignInCover from "layouts/authentication/sign-up/cover";
+import ResetCover from "layouts/authentication/reset-password/cover";
 
 export default function App() {
   const authContext = useContext(AuthContext);
@@ -186,6 +188,8 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         <Route path="/auth/login" element={<SignInIllustration />} />
+        <Route path="/auth/sign-up" element={<SignInCover />} />
+        <Route path="/auth/reset" element={<ResetCover />} />
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

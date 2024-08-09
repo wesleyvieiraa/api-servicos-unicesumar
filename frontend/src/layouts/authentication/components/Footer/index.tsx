@@ -10,7 +10,7 @@ function Footer({ light }: { light?: boolean }): JSX.Element {
   const { size } = typography;
 
   return (
-    <MDBox position="absolute" width="100%" bottom={0} py={4}>
+    <MDBox width="100%" bottom={0} py={4}>
       <Container>
         <MDBox
           width="100%"
