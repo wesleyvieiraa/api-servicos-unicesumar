@@ -24,6 +24,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import Logout from "layouts/authentication/logout";
 
 // Declaring prop types for DashboardNavbar
 interface Props {
@@ -38,7 +39,8 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   >();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
-  const [openMenu, setOpenMenu] = useState<any>(false);
+  const [openMenuUser, setOpenMenuUser] = useState<any>(false);
+  const [openMenuNotifications, setOpenMenuNotifications] = useState<any>(false);
   const route = useLocation().pathname.split("/").slice(1);
 
   useEffect(() => {
@@ -69,20 +71,39 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event: any) => setOpenMenu(event.currentTarget);
-  const handleCloseMenu = () => setOpenMenu(false);
+  const handleOpenMenuUser = (event: any) => setOpenMenuUser(event.currentTarget);
+  const handleCloseMenuUser = () => setOpenMenuUser(false);
+  const handleOpenMenuNotifications = (event: any) => setOpenMenuNotifications(event.currentTarget);
+  const handleCloseMenuNotifications = () => setOpenMenuNotifications(false);
 
   // Render the notifications menu
-  const renderMenu = () => (
+  const renderMenuUser = () => (
     <Menu
-      anchorEl={openMenu}
+      anchorEl={openMenuUser}
       anchorReference={null}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "left",
       }}
-      open={Boolean(openMenu)}
-      onClose={handleCloseMenu}
+      open={Boolean(openMenuUser)}
+      onClose={handleCloseMenuUser}
+      sx={{ mt: 2 }}
+    >
+      <Logout />
+    </Menu>
+  );
+
+  // Render the notifications menu
+  const renderMenuNotifications = () => (
+    <Menu
+      anchorEl={openMenuNotifications}
+      anchorReference={null}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}
+      open={Boolean(openMenuNotifications)}
+      onClose={handleCloseMenuNotifications}
       sx={{ mt: 2 }}
     >
       <NotificationItem icon={<Icon>email</Icon>} title="Checar novas mensagens" />
@@ -131,11 +152,15 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
               <MDInput label="Procurar" />
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
-                </IconButton>
-              </Link>
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={navbarIconButton}
+                onClick={handleOpenMenuUser}
+              >
+                <Icon sx={iconsStyle}>account_circle</Icon>
+              </IconButton>
+              {renderMenuUser()}
               <IconButton
                 size="small"
                 disableRipple
@@ -160,13 +185,13 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
                 size="small"
                 color="inherit"
                 sx={navbarIconButton}
-                onClick={handleOpenMenu}
+                onClick={handleOpenMenuNotifications}
               >
                 <MDBadge badgeContent={9} color="error" size="xs" circular>
                   <Icon sx={iconsStyle}>notifications</Icon>
                 </MDBadge>
               </IconButton>
-              {renderMenu()}
+              {renderMenuNotifications()}
             </MDBox>
           </MDBox>
         )}

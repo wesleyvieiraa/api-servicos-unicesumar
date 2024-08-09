@@ -106,7 +106,7 @@ export default function App() {
             <Route
               path={route.route}
               element={
-                <ProtectedRoute isAuthenticated={true /* authContext.isAuthenticated */}>
+                <ProtectedRoute isAuthenticated={authContext.isAuthenticated}>
                   {route.component}
                 </ProtectedRoute>
               }
@@ -189,6 +189,7 @@ export default function App() {
       <Routes>
         <Route path="/auth/login" element={<SignInIllustration />} />
         <Route path="/auth/sign-up" element={<SignInCover />} />
+        <Route path="/auth/reset" element={<ResetCover />} />
         <Route path="/auth/reset" element={<ResetCover />} />
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/dashboard" />} />
