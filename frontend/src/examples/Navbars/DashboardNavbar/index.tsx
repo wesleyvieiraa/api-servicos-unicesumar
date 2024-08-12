@@ -31,9 +31,10 @@ interface Props {
   absolute?: boolean;
   light?: boolean;
   isMini?: boolean;
+  title?: string;
 }
 
-function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
+function DashboardNavbar({ absolute, light, isMini, title }: Props): JSX.Element {
   const [navbarType, setNavbarType] = useState<
     "fixed" | "absolute" | "relative" | "static" | "sticky"
   >();
@@ -139,7 +140,12 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
     >
       <Toolbar sx={navbarContainer}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+          <Breadcrumbs
+            icon="home"
+            title={title ? title : route[route.length - 1]}
+            route={route}
+            light={light}
+          />
           <IconButton sx={navbarDesktopMenu} onClick={handleMiniSidenav} size="small" disableRipple>
             <Icon fontSize="medium" sx={iconsStyle}>
               {miniSidenav ? "menu_open" : "menu"}

@@ -56,7 +56,7 @@ function Footer({ company, links }: Props): JSX.Element {
             favorite
           </Icon>
         </MDBox>
-        by
+        por
         <Link href={href} target="_blank">
           <MDTypography variant="button" fontWeight="medium">
             &nbsp;{name}&nbsp;

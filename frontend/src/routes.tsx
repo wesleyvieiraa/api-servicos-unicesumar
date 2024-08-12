@@ -17,10 +17,11 @@
 // @mui icons
 import Icon from "@mui/material/Icon";
 
-import Teste from "layouts/dashboards/teste";
 import SignInIllustration from "layouts/authentication/sign-in/illustration";
 import SignInCover from "layouts/authentication/sign-up/cover";
 import ResetCover from "layouts/authentication/reset-password/cover";
+import Dashboard from "layouts/Dashboard";
+import NewService from "layouts/NewService";
 
 const routes = [
   {
@@ -29,8 +30,23 @@ const routes = [
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Teste />,
+    component: <Dashboard />,
     noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Serviços",
+    key: "services",
+    icon: <Icon fontSize="small">home_repair_service</Icon>,
+    route: "/dashboard",
+    collapse: [
+      {
+        name: "Novo Serviço",
+        key: "new-service",
+        route: "/new-service",
+        component: <NewService />,
+      },
+    ],
   },
   {
     type: "auth",

@@ -22,7 +22,13 @@ interface Props {
 function ComplexStatisticsCard({ color, title, count, percentage, icon }: Props): JSX.Element {
   return (
     <Card>
-      <MDBox display="flex" justifyContent="space-between" pt={1} px={2}>
+      <MDBox
+        display="flex"
+        justifyContent="space-between"
+        pt={1}
+        pb={!percentage.amount ? 1 : 0}
+        px={2}
+      >
         <MDBox
           variant="gradient"
           bgColor={color}
@@ -47,20 +53,22 @@ function ComplexStatisticsCard({ color, title, count, percentage, icon }: Props)
           <MDTypography variant="h4">{count}</MDTypography>
         </MDBox>
       </MDBox>
-      <Divider />
-      <MDBox pb={2} px={2}>
-        <MDTypography component="p" variant="button" color="text" display="flex">
-          <MDTypography
-            component="span"
-            variant="button"
-            fontWeight="bold"
-            color={percentage.color}
-          >
-            {percentage.amount}
+      {percentage.amount && (
+        <MDBox pb={2} px={2}>
+          <Divider />
+          <MDTypography component="p" variant="button" color="text" display="flex">
+            <MDTypography
+              component="span"
+              variant="button"
+              fontWeight="bold"
+              color={percentage.color}
+            >
+              {percentage.amount}
+            </MDTypography>
+            &nbsp;{percentage.label}
           </MDTypography>
-          &nbsp;{percentage.label}
-        </MDTypography>
-      </MDBox>
+        </MDBox>
+      )}
     </Card>
   );
 }
