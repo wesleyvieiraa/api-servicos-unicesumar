@@ -40,13 +40,6 @@ const AuthContextProvider = ({ children }: AuthContextType): JSX.Element => {
     navigate(location.pathname);
   }, []);
 
-  useEffect(() => {
-    if (!token) return;
-
-    setIsAuthenticated(isAuthenticated);
-    navigate(location.pathname);
-  }, [isAuthenticated]);
-
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
