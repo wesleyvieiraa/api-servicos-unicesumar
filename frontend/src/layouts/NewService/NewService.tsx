@@ -1,6 +1,5 @@
 import { Card, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import MDBox from "components/MDBox";
-import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import Footer from "examples/Footer";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -12,31 +11,41 @@ import Details from "./components/Details";
 import Media from "./components/Media";
 
 function getSteps(): string[] {
-  return ["Informações básicas", "Detalhes", "Media", "Localização"];
-}
-
-function getStepContent(stepIndex: number): JSX.Element {
-  switch (stepIndex) {
-    case 0:
-      return <BasicInformations />;
-    case 1:
-      return <Details />;
-    case 2:
-      return <Media />;
-    case 3:
-      return <Location />;
-    default:
-      return null;
-  }
+  return ["Informações básicas", "Detalhes", "Imagens", "Localização"];
 }
 
 export const NewService = (): JSX.Element => {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(2);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
+  let form;
 
-  const handleNext = () => setActiveStep(activeStep + 1);
-  const handleBack = () => setActiveStep(activeStep - 1);
+  const handleNext = (data: any) => {
+    form = data;
+    console.log(form);
+    setActiveStep(activeStep + 1);
+  };
+  const handleBack = (data: any) => setActiveStep(activeStep - 1);
+
+  function onSubmit(data: any) {
+    data.preventDefault();
+    console.log("Submiutei");
+  }
+
+  function getStepContent(stepIndex: number): JSX.Element {
+    switch (stepIndex) {
+      case 0:
+        return <BasicInformations handleNextStep={handleNext} />;
+      case 1:
+        return <Details handleNextStep={handleNext} handleBackStep={handleBack} />;
+      case 2:
+        return <Location />;
+      case 3:
+        return <Media handleNextStep={handleNext} handleBackStep={handleBack} />;
+      default:
+        return null;
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -54,7 +63,7 @@ export const NewService = (): JSX.Element => {
                 Insira as informação sobre o serviço oferecido.
               </MDTypography>
             </MDBox>
-            <Card>
+            <Card component="form" role="form" method="POST" onSubmit={onSubmit}>
               <MDBox mt={-3} mx={2}>
                 <Stepper activeStep={activeStep} alternativeLabel>
                   {steps.map((label) => (
@@ -64,27 +73,7 @@ export const NewService = (): JSX.Element => {
                   ))}
                 </Stepper>
               </MDBox>
-              <MDBox p={2}>
-                <MDBox>
-                  {getStepContent(activeStep)}
-                  <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
-                    {activeStep === 0 ? (
-                      <MDBox />
-                    ) : (
-                      <MDButton variant="outlined" color="dark" onClick={handleBack}>
-                        voltar
-                      </MDButton>
-                    )}
-                    <MDButton
-                      variant="gradient"
-                      color="dark"
-                      onClick={!isLastStep ? handleNext : undefined}
-                    >
-                      {isLastStep ? "enviar" : "próximo"}
-                    </MDButton>
-                  </MDBox>
-                </MDBox>
-              </MDBox>
+              {getStepContent(activeStep)}
             </Card>
           </Grid>
         </Grid>
