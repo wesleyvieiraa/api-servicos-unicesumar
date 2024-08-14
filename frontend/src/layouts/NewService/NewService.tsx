@@ -11,7 +11,7 @@ import Details from "./components/Details";
 import Media from "./components/Media";
 
 function getSteps(): string[] {
-  return ["Informações básicas", "Detalhes", "Imagens", "Localização"];
+  return ["Informações básicas", "Detalhes", "Localização", "Imagens"];
 }
 
 export const NewService = (): JSX.Element => {
