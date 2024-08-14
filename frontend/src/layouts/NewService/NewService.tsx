@@ -15,7 +15,7 @@ function getSteps(): string[] {
 }
 
 export const NewService = (): JSX.Element => {
-  const [activeStep, setActiveStep] = useState<number>(2);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
   let form;
