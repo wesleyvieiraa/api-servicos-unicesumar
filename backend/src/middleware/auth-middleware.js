@@ -1,9 +1,9 @@
 const authService = require("../service/auth-service");
 const logger = require("../utils/logger");
 
-const middlewareAuthorization = function (permissoesNeeded = []) {
-  if (typeof permissoesNeeded === "string") {
-    permissoesNeeded = [permissoesNeeded];
+const middlewareAuthorization = function (permissionsNeeded = []) {
+  if (typeof permissionsNeeded === "string") {
+    permissionsNeeded = [permissionsNeeded];
   }
   return async (req, res, next) => {
     const token = req.headers["authorization"];
@@ -25,20 +25,20 @@ const middlewareAuthorization = function (permissoesNeeded = []) {
         .send({ auth: false, message: "Falha ao autenticar o Token. Precisa fazer login." });
     }
 
-    req.usuario = { idUsuario: decoded.idUsuario, permissoes: decoded.permissoes };
+    req.user = { userId: decoded.userId, permissions: decoded.permissions };
 
-    if (!req.usuario || !req.usuario.permissoes || !Array.isArray(req.usuario.permissoes)) {
+    if (!req.user || !req.user.permissions || !Array.isArray(req.user.permissions)) {
 
-      logger.error(`Falha, usuario sem permissões: ${req.usuario.idUsuario} path ${req.originalUrl}`)
+      logger.error(`Falha, usuário sem permissões: ${req.user.userId} path ${req.originalUrl}`)
       return res.status(401).json({ message: "Sem permissão", errors: [{ msg: "Sem Permissão" }] });
     }
 
-    var intersectionPermissoes = permissoesNeeded.filter((x) => req.usuario.permissoes.includes(x));
+    var intersectionpermissions = permissionsNeeded.filter((x) => req.user.permissions.includes(x));
 
-    if (permissoesNeeded.length && intersectionPermissoes.length == 0) {
+    if (permissionsNeeded.length && intersectionpermissions.length == 0) {
 
-      logger.error(`Falha, usuario (${req.usuario.idUsuario}) sem permissão para acessar o path: ${req.originalUrl}`)
-      logger.error(`Permissões necessárias:${JSON.stringify(permissoesNeeded)}; permissões usuario: ${JSON.stringify(req.usuario.permissoes)}`);
+      logger.error(`Falha, usuário (${req.user.userId}) sem permissão para acessar o path: ${req.originalUrl}`)
+      logger.error(`Permissões necessárias:${JSON.stringify(permissionsNeeded)}; permissões usuário: ${JSON.stringify(req.user.permissions)}`);
 
       return res.status(401).json({ message: "Sem permissão", errors: [{ msg: "Sem Permissão" }] });
     }
