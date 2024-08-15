@@ -7,7 +7,7 @@ import {
   ReactElement,
   useContext,
 } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
@@ -29,6 +29,7 @@ import ProtectedRoute from "examples/ProtectedRoute";
 import SignInIllustration from "layouts/authentication/sign-in/illustration";
 import SignInCover from "layouts/authentication/sign-up/cover";
 import ResetCover from "layouts/authentication/reset-password/cover";
+import { setupAxiosInterceptors } from "services/interceptor";
 
 export default function App() {
   const authContext = useContext(AuthContext);
@@ -76,6 +77,15 @@ export default function App() {
 
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+
+  // if the token expired or other errors it logs out and goes to the login page
+  const navigate = useNavigate();
+  setupAxiosInterceptors({
+    onUnauthenticated: () => {
+      authContext.logout();
+      navigate("/auth/login");
+    },
+  });
 
   // Setting the dir attribute for the body element
   useEffect(() => {
