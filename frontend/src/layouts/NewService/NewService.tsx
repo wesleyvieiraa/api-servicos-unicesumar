@@ -9,27 +9,32 @@ import BasicInformations from "./components/BasicInformations";
 import Location from "./components/Location";
 import Details from "./components/Details";
 import Media from "./components/Media";
+import servicesService from "services/services-service";
+import { Service } from "models/Service.model";
 
 function getSteps(): string[] {
   return ["Informações básicas", "Detalhes", "Localização", "Imagens"];
 }
+let form: Service;
 
 export const NewService = (): JSX.Element => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
-  let form;
 
   const handleNext = (data: any) => {
-    form = data;
-    console.log(form);
+    form = { ...form, ...data };
     setActiveStep(activeStep + 1);
   };
   const handleBack = (data: any) => setActiveStep(activeStep - 1);
 
-  function onSubmit(data: any) {
-    data.preventDefault();
-    console.log("Submiutei");
+  async function onSubmit(data: any) {
+    form = { ...form, ...data };
+    try {
+      await servicesService.create(form);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function getStepContent(stepIndex: number): JSX.Element {
@@ -39,9 +44,9 @@ export const NewService = (): JSX.Element => {
       case 1:
         return <Details handleNextStep={handleNext} handleBackStep={handleBack} />;
       case 2:
-        return <Location />;
+        return <Location /* handleNextStep={onSubmit} handleBackStep={handleBack} */ />;
       case 3:
-        return <Media handleNextStep={handleNext} handleBackStep={handleBack} />;
+        return <Media handleNextStep={onSubmit} handleBackStep={handleBack} />;
       default:
         return null;
     }
