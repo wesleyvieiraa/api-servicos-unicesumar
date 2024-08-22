@@ -31,10 +31,17 @@ interface Props {
   absolute?: boolean;
   light?: boolean;
   isMini?: boolean;
-  title?: string;
+  title: string;
+  titleToBradcrumb?: string;
 }
 
-function DashboardNavbar({ absolute, light, isMini, title }: Props): JSX.Element {
+function DashboardNavbar({
+  absolute,
+  light,
+  isMini,
+  title,
+  titleToBradcrumb = "",
+}: Props): JSX.Element {
   const [navbarType, setNavbarType] = useState<
     "fixed" | "absolute" | "relative" | "static" | "sticky"
   >();
@@ -145,6 +152,7 @@ function DashboardNavbar({ absolute, light, isMini, title }: Props): JSX.Element
             title={title ? title : route[route.length - 1]}
             route={route}
             light={light}
+            titleToBradcrumb={titleToBradcrumb}
           />
           <IconButton sx={navbarDesktopMenu} onClick={handleMiniSidenav} size="small" disableRipple>
             <Icon fontSize="medium" sx={iconsStyle}>

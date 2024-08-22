@@ -4,7 +4,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 export const MyServices = (): JSX.Element => {
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar titleToBradcrumb="Serviço" title="Serviços" />
     </DashboardLayout>
   );
 };

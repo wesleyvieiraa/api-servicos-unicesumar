@@ -26,7 +26,7 @@ const geocodeLatLng = async (lat: number, lng: number, apiKey: string) => {
   return "Endereço não encontrado";
 };
 
-export const Location = (): JSX.Element => {
+export const Location = ({ formData }: any): JSX.Element => {
   const [center, setCenter] = useState(defaultCenter);
   const [radius, setRadius] = useState(1000); // Define um raio padrão (em metros)
   const [address, setAddress] = useState<string | null>(null);
@@ -59,6 +59,8 @@ export const Location = (): JSX.Element => {
         lng: event.latLng.lng(),
       };
       setCenter(newCenter);
+
+      console.log(newCenter.lat, newCenter.lng);
 
       const foundAddress = await geocodeLatLng(newCenter.lat, newCenter.lng, API_KEY);
       setAddress(foundAddress);

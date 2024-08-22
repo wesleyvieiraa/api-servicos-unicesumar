@@ -13,7 +13,7 @@ export const Dashboard = (): JSX.Element => {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar title="Dashboard" />
       <MDBox mt={1.5}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>

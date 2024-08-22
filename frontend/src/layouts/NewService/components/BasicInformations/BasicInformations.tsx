@@ -1,134 +1,89 @@
-import React, { useState } from "react";
-import { Grid, Select, MenuItem, FormControl, InputLabel, TextField } from "@mui/material";
+import { Grid, Autocomplete } from "@mui/material";
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { stepOneSchema } from "layouts/NewService/validations/serviceForm";
-import MDButton from "components/MDButton";
-import { SelectChangeEvent } from "@mui/material";
-import { z } from "zod";
+import MDTypography from "components/MDTypography";
+import FormFieldFormik from "components/FormFieldFormik";
 
-type StepOneSchema = z.infer<typeof stepOneSchema>;
-
-export const BasicInformations = ({
-  handleNextStep,
-}: {
-  handleNextStep: (data: any) => void;
-}): JSX.Element => {
-  const [categories, setCategories] = useState(["Categoria 1", "Categoria 2"]);
-  const [newCategory, setNewCategory] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
+export const BasicInformations = ({ formData }: any): JSX.Element => {
+  const { formField, values, errors, touched } = formData;
+  const { name, providerName, description, categoryId } = formField;
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<StepOneSchema>({
-    resolver: zodResolver(stepOneSchema),
-  });
-
-  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
-    const value = event.target.value;
-    setSelectedCategory(value);
-    // Se "Criar nova categoria" for selecionado, não limpa o campo
-    if (value !== "new-category") {
-      setNewCategory("");
-    }
-  };
-
-  const handleNewCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewCategory(event.target.value);
-  };
-
-  const addNewCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
-      setSelectedCategory(newCategory);
-    }
-  };
-
-  const onSubmit = (data: StepOneSchema) => {
-    handleNextStep(data); // Chamar a função para o próximo passo
-  };
+    name: nameV,
+    providerName: providerNameV,
+    categoryId: categoryIdV,
+    description: descriptionV,
+  } = values;
+  const optionsCategory = [
+    { id: 1, label: "Categoria 1" },
+    { id: 2, label: "Categoria 2" },
+  ];
 
   return (
-    <MDBox p={2}>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <MDBox>
+      <MDBox lineHeight={0}>
+        <MDTypography variant="h5">Informações básicas</MDTypography>
+      </MDBox>
+      <MDBox mt={1.625}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <MDInput
-              variant="standard"
-              label={"Nome do Serviço"}
-              fullWidth
-              required
-              {...register("serviceName")}
-              error={!!errors.serviceName}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl variant="standard" fullWidth required>
-              <InputLabel>Categoria</InputLabel>
-              <Select value={selectedCategory} onChange={handleCategoryChange} label="Categoria">
-                {categories.map((category, index) => (
-                  <MenuItem key={index} value={category}>
-                    {category}
-                  </MenuItem>
-                ))}
-                <MenuItem value="new-category">+ Criar nova categoria</MenuItem>
-              </Select>
-            </FormControl>
-
-            {selectedCategory === "new-category" && (
-              <MDBox mt={2}>
-                <TextField
-                  variant="standard"
-                  label="Nova Categoria"
-                  value={newCategory}
-                  onChange={handleNewCategoryChange}
-                  fullWidth
-                />
-                <MDButton
-                  variant="gradient"
-                  color="dark"
-                  onClick={addNewCategory}
-                  style={{ marginTop: "10px" }}
-                >
-                  Adicionar Categoria
-                </MDButton>
-              </MDBox>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <MDInput
-              variant="standard"
-              label={"Nome do Prestador"}
-              fullWidth
-              required
-              {...register("providerName")}
-              error={!!errors.providerName}
-            />
-          </Grid>
           <Grid item xs={12}>
-            <MDInput
-              variant="standard"
-              type="textarea"
-              label={"Descrição"}
-              multiline
-              rows={5}
-              fullWidth
-              required
-              {...register("description")}
-              error={!!errors.description}
+            <FormFieldFormik
+              type={name.type}
+              label={name.label}
+              name={name.name}
+              value={nameV}
+              placeholder={name.placeholder}
+              error={errors.name && touched.name}
+              success={nameV.length > 0 && !errors.name}
             />
           </Grid>
         </Grid>
-        <MDBox mt={3} width="100%" display="flex" justifyContent="end">
-          <MDButton variant="gradient" color="dark" type="submit">
-            Próximo
-          </MDButton>
-        </MDBox>
-      </form>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <FormFieldFormik
+              type={providerName.type}
+              label={providerName.label}
+              name={providerName.name}
+              value={providerNameV}
+              placeholder={providerName.placeholder}
+              error={errors.providerName && touched.providerName}
+              success={providerNameV > 0 && !errors.providerName}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Autocomplete
+              options={optionsCategory}
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => {
+                return (
+                  <FormFieldFormik
+                    {...params}
+                    label={categoryId.label}
+                    name={categoryId.name}
+                    value={categoryIdV}
+                    placeholder={categoryId.placeholder}
+                    error={errors.categoryId && touched.categoryId}
+                    success={categoryIdV > 0 && !errors.categoryId}
+                  />
+                );
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormFieldFormik
+              type={description.type}
+              label={description.label}
+              name={description.name}
+              value={descriptionV}
+              placeholder={description.placeholder}
+              error={errors.description && touched.description}
+              success={descriptionV.length > 0 && !errors.description}
+              helperText={`${descriptionV.length}/500`}
+              multiline
+              rows={5}
+            />
+          </Grid>
+        </Grid>
+      </MDBox>
     </MDBox>
   );
 };
