@@ -16,7 +16,7 @@ export const MyServices = (): JSX.Element => {
   const [serviceList, setProductList] = useState<Service[]>([]);
   const navigate = useNavigate();
   const nav = (serviceId: number) => {
-    navigate(`/produtos/editar-servico/${serviceId}`);
+    navigate(`/editar-servico/${serviceId}`);
   };
 
   useEffect(() => {

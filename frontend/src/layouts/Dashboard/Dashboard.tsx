@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
   const nav = () => {
-    navigate("/new-service");
+    navigate("/novo-servico");
   };
 
   return (

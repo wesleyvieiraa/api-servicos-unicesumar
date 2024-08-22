@@ -19,6 +19,10 @@ class ServicesService {
     return await httpService.get(`${this.baseUrl}/list${query}`);
   };
 
+  getById = async (serviceId: number) => {
+    return await httpService.get(`${this.baseUrl}/id/${serviceId}`);
+  };
+
   create = async (payload: Service) => {
     return await httpService.post(`${this.baseUrl}/create`, payload);
   };
