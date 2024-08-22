@@ -22,6 +22,7 @@ import SignInCover from "layouts/authentication/sign-up/cover";
 import ResetCover from "layouts/authentication/reset-password/cover";
 import Dashboard from "layouts/Dashboard";
 import NewService from "layouts/NewService";
+import MyServices from "layouts/MyServices";
 
 const routes = [
   {
@@ -45,6 +46,12 @@ const routes = [
         key: "new-service",
         route: "/new-service",
         component: <NewService />,
+      },
+      {
+        name: "Serviços",
+        key: "services",
+        route: "/services",
+        component: <MyServices />,
       },
     ],
   },

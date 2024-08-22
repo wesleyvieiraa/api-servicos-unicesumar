@@ -11,12 +11,19 @@ interface Props {
   title: string;
   description: string;
   price: string;
-  location: ReactNode;
+  location?: ReactNode;
   action?: ReactNode | boolean;
   [key: string]: any;
 }
 
-function BookingCard({ image, title, description, price, location, action }: Props): JSX.Element {
+function BookingCard({
+  image,
+  title,
+  description,
+  price,
+  location = null,
+  action,
+}: Props): JSX.Element {
   return (
     <Card
       sx={{
@@ -84,14 +91,16 @@ function BookingCard({ image, title, description, price, location, action }: Pro
         <MDTypography variant="body2" fontWeight="regular" color="text">
           {price}
         </MDTypography>
-        <MDBox color="text" display="flex" alignItems="center">
-          <Icon color="inherit" sx={{ m: 0.5 }}>
-            place
-          </Icon>
-          <MDTypography variant="button" fontWeight="light" color="text">
-            {location}
-          </MDTypography>
-        </MDBox>
+        {location && (
+          <MDBox color="text" display="flex" alignItems="center">
+            <Icon color="inherit" sx={{ m: 0.5 }}>
+              place
+            </Icon>
+            <MDTypography variant="button" fontWeight="light" color="text">
+              {location}
+            </MDTypography>
+          </MDBox>
+        )}
       </MDBox>
     </Card>
   );

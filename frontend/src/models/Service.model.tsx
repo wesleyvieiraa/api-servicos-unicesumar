@@ -1,3 +1,5 @@
+import { ServiceFile } from "./service-file.model";
+
 export interface Service {
   serviceId?: number;
   userId?: number;
@@ -9,4 +11,5 @@ export interface Service {
   unitId: number | string;
   paymentMethodIds: number[];
   location?: string;
+  images?: ServiceFile[];
 };
