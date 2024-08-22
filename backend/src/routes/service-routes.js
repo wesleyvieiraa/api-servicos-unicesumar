@@ -4,6 +4,12 @@ const middlewareAuthorization = require("../middleware/auth-middleware");
 
 /* GET */
 router.get(
+  "/id/:serviceId",
+  [middlewareAuthorization("ADMIN")],
+  serviceController.getServiceById
+);
+
+router.get(
   "/list",
   [middlewareAuthorization("ADMIN")],
   serviceController.listService

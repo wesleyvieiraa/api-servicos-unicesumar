@@ -89,6 +89,32 @@ class ServiceRepository {
     }
   }
 
+  async getServiceById(serviceId) {
+    try {
+      const sql = 
+        `SELECT
+          s.service_id,
+          s.user_id,
+          s."name",
+          s.category_id,
+          s.provider_name,
+          s.description,
+          s.price,
+          s.unit_id,
+          s.payment_method_ids,
+          s."location"
+        FROM services.service s
+        WHERE s.service_id = $1`;
+
+      const params = [serviceId];
+      const result = await pool.query(sql, params);
+      return result.rowCount > 0 ? (factory(result.rows, Service))[0] : null;
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao consultar o serviço pelo ID: ${serviceId} no DB. ${whereAndStackError(__filename, error)}`);
+      throw new Error("Ocorreu um erro ao consultar o serviço.");
+    }
+  }
+
   async listService(
     limit = process.env.PAGINATION_ROWS_PER_PAGE,
     offset = 0,
@@ -130,8 +156,8 @@ class ServiceRepository {
       const services = factory(result.rows, Service);
       return { services, totalRows: result.rowCount };
     } catch (error) {
-      logger.error(`Ocorreu um erro ao listar o novo serviço. ${whereAndStackError(__filename, error)}`);
-      throw new Error("Ocorreu um erro ao listar o novo serviço.");
+      logger.error(`Ocorreu um erro ao listar os serviços. ${whereAndStackError(__filename, error)}`);
+      throw new Error("Ocorreu um erro ao listar os serviços.");
     }
   }
 }

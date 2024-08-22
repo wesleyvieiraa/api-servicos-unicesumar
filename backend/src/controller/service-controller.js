@@ -69,6 +69,25 @@ class ServiceController {
     ];
   }
 
+  async getServiceById(req, res) {
+    try {
+      const service = await new ServiceRepository().getServiceById(req.params.serviceId);
+      
+      if (!service) {
+        return res.status(400).send({ 
+          errors: [{ msg: "Serviço não encontrado." }] 
+        });
+      }
+      
+      return res.status(200).send({ service });
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao tentar consultar o serviço. ${whereAndStackError(__filename, error)}`);
+      return res.status(400).send({ 
+        errors: [{ msg: error.message }] 
+      });
+    }
+  }
+  
   async listService(req, res) {
     try {
       const { services, totalRows } = await flexibleSearch(
@@ -85,7 +104,7 @@ class ServiceController {
       
       return res.status(200).send({ services, totalRows });
     } catch (error) {
-      logger.error(`Ocorreu um erro ao tentar atualizar o serviço. ${whereAndStackError(__filename, error)}`);
+      logger.error(`Ocorreu um erro ao tentar listar o serviço. ${whereAndStackError(__filename, error)}`);
       return res.status(400).send({ 
         errors: [{ msg: error.message }] 
       });
