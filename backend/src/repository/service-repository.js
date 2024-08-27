@@ -4,6 +4,7 @@ const { whereAndStackError } = require("../utils/where-and-stack-error");
 const Service = require("../model/service-model");
 const { factory } = require("../utils/factory");
 const PrepareSql = require("../utils/prepare-sql");
+const { toLogico } = require("../utils/parser");
 
 class ServiceRepository {
   /**
@@ -124,7 +125,7 @@ class ServiceRepository {
     sortColumn = ['name', 'asc']
   ) {
     try {
-      const sql = 
+      let sql = 
         `SELECT
           s.service_id,
           s.user_id,
@@ -137,10 +138,14 @@ class ServiceRepository {
           s.payment_method_ids,
           s."location"
         FROM services.service s
-        WHERE 1=1 $replaceFilterText $replaceFilterId $replaceFilterBool
+        WHERE 1=1 $replaceFilterText $replaceFilterId $replaceFilterBool $replaceUser
         ORDER BY $replaceOrderColumn
         LIMIT $replaceLimitIndex 
         OFFSET $replaceOffsetIndex;`;
+
+      sql = sql.replace("$replaceUser", `AND user_id ${toLogico(filterBoolMap.get("myServices")) ? "=" : "<>"} ${filterIdMap.get("userId")}`);
+      filterBoolMap.delete("myServices");
+      filterIdMap.delete("userId");
 
       let customQuery = new PrepareSql().prepareCustomQuery(
         sql,

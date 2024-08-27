@@ -4,6 +4,7 @@ const ServiceRepository = require("../repository/service-repository");
 const logger = require("../utils/logger");
 const { whereAndStackError } = require("../utils/where-and-stack-error");
 const { flexibleSearch } = require("../utils/flexible-search");
+const { toLogico } = require("../utils/parser");
 
 class ServiceController {
   validadeCreation() {
@@ -90,10 +91,12 @@ class ServiceController {
   
   async listService(req, res) {
     try {
+      req.query.userId = req.user.userId;
+
       const { services, totalRows } = await flexibleSearch(
         ['name'],
-        ['categoryId'],
-        [],
+        ['categoryId', 'userId'],
+        ['myServices'],
         ['name'],
         req.query.sort,
         ['asc', 'desc'],

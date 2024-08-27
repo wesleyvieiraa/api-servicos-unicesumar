@@ -23,7 +23,9 @@ import ResetCover from "layouts/authentication/reset-password/cover";
 import Dashboard from "layouts/Dashboard";
 import NewService from "layouts/NewService";
 import MyServices from "layouts/MyServices";
+import SearchService from "layouts/SearchService";
 import EditService from "layouts/EditService";
+import ServiceDashboard from "layouts/ServiceDashboard";
 
 const routes = [
   {
@@ -43,6 +45,12 @@ const routes = [
     route: "/dashboard",
     collapse: [
       {
+        name: "Procurar Serviço",
+        key: "search-service",
+        route: "/procurar-servico",
+        component: <SearchService />,
+      },
+      {
         name: "Novo Serviço",
         key: "novo-servico",
         route: "/novo-servico",
@@ -53,12 +61,19 @@ const routes = [
         key: "editar-service",
         route: "/editar-servico/:serviceId",
         component: <EditService />,
+        type: "title",
       },
       {
-        name: "Serviços",
+        name: "Meus Serviços",
         key: "services",
-        route: "/services",
+        route: "/servicos",
         component: <MyServices />,
+      },
+      {
+        name: "Serviço",
+        key: "service",
+        route: "/servico/:serviceId",
+        component: <ServiceDashboard />,
       },
     ],
   },

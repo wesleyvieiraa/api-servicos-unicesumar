@@ -7,13 +7,15 @@ class ServicesService {
     name: string = null,
     categoryId: string = null,
     sort: string = null,
-    page: number = 1
+    page: number = 1,
+    myServices: boolean = false
   ) => {
     let query = "?";
     query += name ? `name=${name}&` : "";
     query += categoryId ? `categoryId=${categoryId}&` : "";
     query += sort ? `sort=${sort}&` : "";
     query += page > 0 ? `page=${page}&` : "";
+    query += myServices !== null ? `myServices=${myServices}&` : "";
     query = query.substring(query.length - 1) == "&" ? query.substring(0, query.length - 1) : "";
 
     return await httpService.get(`${this.baseUrl}/list${query}`);
