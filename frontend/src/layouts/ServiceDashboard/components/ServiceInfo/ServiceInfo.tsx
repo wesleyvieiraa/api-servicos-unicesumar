@@ -55,6 +55,16 @@ export const ServiceInfo = ({ service }: Props): JSX.Element => {
           {service.description}
         </MDTypography>
       </MDBox>
+      <MDBox mt={3} mb={1} ml={0.5}>
+        <MDTypography variant="button" fontWeight="regular" color="text">
+          Localização
+        </MDTypography>
+      </MDBox>
+      <MDBox m={0} mb={2}>
+        <MDTypography variant="body2" color="text" fontWeight="regular" verticalAlign="middle">
+          {service.location}
+        </MDTypography>
+      </MDBox>
       <MDBox mt={3}>
         <Grid item xs={12} lg={5} container>
           <MDButton variant="gradient" color="info" fullWidth>

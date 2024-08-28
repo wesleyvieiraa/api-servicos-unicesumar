@@ -1,5 +1,6 @@
 import { Grid, Icon, Tooltip } from "@mui/material";
 import MDBox from "components/MDBox";
+import MDPagination from "components/MDPagination";
 import MDTypography from "components/MDTypography";
 import BookingCard from "examples/Cards/BookingCard";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -14,7 +15,10 @@ const imgDefaultBaseUrl = process.env.REACT_APP_IMG_BASE_URL_DEFAULT_PRODUCT_IMG
 
 export const MyServices = (): JSX.Element => {
   const [serviceList, setProductList] = useState<Service[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+
   const nav = (serviceId: number) => {
     navigate(`/editar-servico/${serviceId}`);
   };
@@ -22,14 +26,25 @@ export const MyServices = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
-        const { services, totalRows } = await servicesService.list(null, null, null, 1, true);
+        const { services, totalRows } = await servicesService.list(
+          null,
+          null,
+          null,
+          currentPage,
+          true
+        );
         setProductList(services);
+        setTotalPages(Math.ceil(totalRows / 9)); //9 items por pagina
       } catch (error) {
         console.error(error);
       }
     };
     listServices();
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
 
   return (
     <DashboardLayout>
@@ -71,6 +86,17 @@ export const MyServices = (): JSX.Element => {
                 </Grid>
               ))}
           </Grid>
+        </MDBox>
+        <MDBox mt={4} display="flex" justifyContent="center">
+          <MDPagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            size="small"
+            showFirstButton
+            showLastButton
+          />
         </MDBox>
       </MDBox>
     </DashboardLayout>
