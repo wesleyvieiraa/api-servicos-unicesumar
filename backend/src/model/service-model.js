@@ -10,6 +10,7 @@ class Service {
     this.unitId           = dto.unit_id            || dto.unitId;
     this.paymentMethodIds = dto.payment_method_ids || dto.paymentMethodIds;
     this.location         = dto.location           || dto.location;
+    this.images           = dto.images;
     
     if (this.paymentMethodIds && !Array.isArray(this.paymentMethodIds)) {
       this.paymentMethodIds = this.paymentMethodIds.split(",");

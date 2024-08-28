@@ -53,6 +53,9 @@ export const BasicInformations = ({ formData }: any): JSX.Element => {
               options={optionsCategory}
               getOptionLabel={(option) => option.label}
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(event, value) => {
+                formData.values.categoryId = value.id;
+              }}
               renderInput={(params) => {
                 return (
                   <FormFieldFormik

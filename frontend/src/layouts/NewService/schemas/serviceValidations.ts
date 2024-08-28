@@ -23,14 +23,14 @@ const validations = [
       .max(255, providerName.errorMaxMsg)
       .min(3, providerName.errorMinMsg)
       .required(providerName.errorMsg),
-    [categoryId.name]: Yup.number(),
+    [categoryId.name]: Yup.number().required(categoryId.errorMsg),
     [description.name]: Yup.string()
       .max(500, description.errorMaxMsg)
       .min(3, description.errorMinMsg),
   }),
   Yup.object().shape({
     [price.name]: Yup.number().required(price.errorMsg),
-    [unitId.name]: Yup.number(),
+    [unitId.name]: Yup.number().required(unitId.errorMsg),
     [paymentMethodIds.name]: Yup.array(Yup.number()).required(paymentMethodIds.errorMsg),
   }),
   Yup.object().shape({

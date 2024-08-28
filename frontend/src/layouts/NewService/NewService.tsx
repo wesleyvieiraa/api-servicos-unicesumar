@@ -16,13 +16,13 @@ import validations from "./schemas/serviceValidations";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
 import initialValuesServiceForm from "./schemas/initialValues";
 import MDButton from "components/MDButton";
+import servicesFileService from "services/services-file-service";
 
 function getSteps(): string[] {
   return ["Informações básicas", "Detalhes", "Localização", "Imagens"];
 }
-let form: Service;
 
-function getStepContent(stepIndex: number, formData: any): JSX.Element {
+function getStepContent(stepIndex: number, formData: any, setFieldValue: any): JSX.Element {
   switch (stepIndex) {
     case 0:
       return <BasicInformations formData={formData} />;
@@ -30,8 +30,8 @@ function getStepContent(stepIndex: number, formData: any): JSX.Element {
       return <Details formData={formData} />;
     case 2:
       return <Location />;
-    // case 3:
-    //   return <Media />;
+    case 3:
+      return <Media formData={formData} setFieldValue={setFieldValue} />;
     default:
       return null;
   }
@@ -44,15 +44,32 @@ export const NewService = (): JSX.Element => {
   const currentValidation = validations[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
-  const handleNext = (data: any) => {
-    form = { ...form, ...data };
-    setActiveStep(activeStep + 1);
-  };
   const handleBack = (data: any) => setActiveStep(activeStep - 1);
 
   const submitForm = async (values: Service, actions: FormikHelpers<Service>) => {
     try {
-      console.log(values);
+      const images = values.images ? values.images : [];
+
+      if (images && images.length > 0) {
+        if (images.length > 5) {
+          console.error("É permitido no máximo de 5 imagens por vez.");
+          actions.setSubmitting(false);
+          return;
+        }
+        values.images = null;
+      }
+
+      const formData = new FormData();
+      images.forEach((file: any, index) => {
+        formData.append("files", file);
+      });
+
+      const { service } = await servicesService.create(values);
+
+      if (service && service.hasOwnProperty("serviceId") && formData) {
+        await servicesFileService.uploadImages(formData, service.serviceId);
+      }
+
       actions.setSubmitting(false);
       actions.resetForm();
       setActiveStep(0);
@@ -107,7 +124,11 @@ export const NewService = (): JSX.Element => {
                     </MDBox>
                     <MDBox p={3}>
                       <MDBox>
-                        {getStepContent(activeStep, { values, touched, formField, errors })}
+                        {getStepContent(
+                          activeStep,
+                          { values, touched, formField, errors },
+                          setFieldValue
+                        )}
                         <MDBox mt={2} width="100%" display="flex" justifyContent="space-between">
                           {activeStep === 0 ? (
                             <MDBox />

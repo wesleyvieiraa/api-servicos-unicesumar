@@ -51,7 +51,7 @@ export const SearchService = (): JSX.Element => {
                     <BookingCard
                       image={
                         service.images && service.images.length > 0
-                          ? `${imgBaseUrl}/${service.images[0].externalId}/${service.images[0].name}`
+                          ? service.images[0].externalId
                           : imgDefaultBaseUrl
                       }
                       title={service.name}
