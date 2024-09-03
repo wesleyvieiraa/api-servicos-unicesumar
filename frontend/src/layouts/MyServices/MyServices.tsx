@@ -14,9 +14,10 @@ const imgBaseUrl = process.env.REACT_APP_IMG_BASE_URL;
 const imgDefaultBaseUrl = process.env.REACT_APP_IMG_BASE_URL_DEFAULT_PRODUCT_IMG;
 
 export const MyServices = (): JSX.Element => {
-  const [serviceList, setProductList] = useState<Service[]>([]);
+  const [serviceList, setServiceList] = useState<Service[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 3; // Número de itens por página
   const navigate = useNavigate();
 
   const nav = (serviceId: number) => {
@@ -26,6 +27,7 @@ export const MyServices = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
+        console.log("Fetching page:", currentPage);
         const { services, totalRows } = await servicesService.list(
           null,
           null,
@@ -33,17 +35,44 @@ export const MyServices = (): JSX.Element => {
           currentPage,
           true
         );
-        setProductList(services);
-        setTotalPages(Math.ceil(totalRows / 9)); //9 items por pagina
+        console.log("API response:", { services, totalRows });
+
+        setServiceList(services);
+
+        const calculatedTotalPages = Math.ceil(totalRows / itemsPerPage);
+        setTotalPages(calculatedTotalPages);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching services:", error);
       }
     };
+
     listServices();
   }, [currentPage]);
 
+  const displayedServices = serviceList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
+  };
+
+  const renderPaginationItems = () => {
+    const items = [];
+    for (let i = 1; i <= totalPages; i++) {
+      items.push(
+        <MDPagination
+          item
+          key={i}
+          active={i === currentPage}
+          onClick={() => handlePageChange(null, i)}
+        >
+          {i}
+        </MDPagination>
+      );
+    }
+    return items;
   };
 
   return (
@@ -52,8 +81,8 @@ export const MyServices = (): JSX.Element => {
       <MDBox py={3}>
         <MDBox mt={2}>
           <Grid container spacing={3}>
-            {serviceList.length > 0 &&
-              serviceList.map((service) => (
+            {displayedServices.length > 0 &&
+              displayedServices.map((service) => (
                 <Grid item xs={12} md={6} lg={4} key={`${service.serviceId}-${service.name}`}>
                   <MDBox mt={3}>
                     <BookingCard
@@ -94,9 +123,16 @@ export const MyServices = (): JSX.Element => {
             onChange={handlePageChange}
             color="primary"
             size="small"
-            showFirstButton
-            showLastButton
-          />
+          >
+            {renderPaginationItems()}
+            <MDPagination
+              item
+              onClick={() => handlePageChange(null, currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <Icon>keyboard_arrow_right</Icon>
+            </MDPagination>
+          </MDPagination>
         </MDBox>
       </MDBox>
     </DashboardLayout>
