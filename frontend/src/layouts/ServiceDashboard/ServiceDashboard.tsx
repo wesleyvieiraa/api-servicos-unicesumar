@@ -70,9 +70,11 @@ export const ServiceDashboard = (): JSX.Element => {
             </MDBox>
 
             <Grid container spacing={3}>
-              <Grid item xs={12} lg={6} xl={5}>
-                <ServiceImages images={images} />
-              </Grid>
+              {service && service.serviceId && (
+                <Grid item xs={12} lg={6} xl={5}>
+                  <ServiceImages images={images} />
+                </Grid>
+              )}
               <Grid item xs={12} lg={5} sx={{ mx: "auto" }}>
                 <ServiceInfo service={service} />
               </Grid>

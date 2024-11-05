@@ -1,7 +1,6 @@
-// @mui material components
 import { styled, Theme } from "@mui/material/styles";
 
-export default styled("form")(({ theme, ownerState }: { theme?: Theme | any; ownerState: any }) => {
+export default styled("div")(({ theme, ownerState }: { theme?: Theme | any; ownerState: any }) => {
   const { palette, typography, borders, functions } = theme;
   const { darkMode } = ownerState;
 

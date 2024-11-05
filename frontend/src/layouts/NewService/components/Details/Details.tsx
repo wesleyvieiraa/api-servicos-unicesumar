@@ -55,6 +55,9 @@ export const Details = ({ formData }: any): JSX.Element => {
                   options={optionsUnit}
                   getOptionLabel={(option) => option.label}
                   isOptionEqualToValue={(option, value) => option.id === value.id}
+                  onChange={(event, value) => {
+                    formData.values.unitId = value.id;
+                  }}
                   renderInput={(params) => {
                     return (
                       <FormFieldFormik
@@ -75,6 +78,9 @@ export const Details = ({ formData }: any): JSX.Element => {
                   options={optionsPayment}
                   getOptionLabel={(option) => option.label}
                   isOptionEqualToValue={(option, value) => option.id === value.id}
+                  onChange={(event, value) => {
+                    formData.values.paymentMethodIds = value.map((el) => el.id);
+                  }}
                   multiple
                   disableClearable
                   size="small"

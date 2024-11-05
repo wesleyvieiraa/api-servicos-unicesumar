@@ -5,6 +5,7 @@ const Service = require("../model/service-model");
 const { factory } = require("../utils/factory");
 const PrepareSql = require("../utils/prepare-sql");
 const { toLogico } = require("../utils/parser");
+const ServiceFileRepository = require("./service-file-repository");
 
 class ServiceRepository {
   /**
@@ -43,7 +44,7 @@ class ServiceRepository {
       ];
 
       const result = await pool.query(sql, params);
-      return result.rowCount > 0 ? factory(result.rows, Service) : null;
+      return result.rowCount > 0 ? (factory(result.rows, Service))[0] : null;
     } catch (error) {
       logger.error(`Ocorreu um erro ao inserir o novo serviço. ${whereAndStackError(__filename, error)}`);
       throw new Error("Ocorreu um erro ao inserir o novo serviço.");
@@ -83,7 +84,7 @@ class ServiceRepository {
       ];
 
       const result = await pool.query(sql, params);
-      return result.rowCount > 0 ? factory(result.rows, Service) : null;
+      return result.rowCount > 0 ? (factory(result.rows, Service))[0] : null;
     } catch (error) {
       logger.error(`Ocorreu um erro ao atualizar o novo serviço. ${whereAndStackError(__filename, error)}`);
       throw new Error("Ocorreu um erro ao atualizar o novo serviço.");
@@ -103,9 +104,17 @@ class ServiceRepository {
           s.price,
           s.unit_id,
           s.payment_method_ids,
-          s."location"
+          s."location",
+          ARRAY_AGG(JSON_BUILD_OBJECT(
+            'serviceFileId', sf.service_file_id,
+            'serviceId', sf.service_id,
+            'externalId', sf.external_id,
+            'name', sf."name" 
+          )) images
         FROM services.service s
-        WHERE s.service_id = $1`;
+        JOIN services.service_file sf ON sf.service_id = s.service_id 
+        WHERE s.service_id = $1
+        GROUP BY s.service_id;`;
 
       const params = [serviceId];
       const result = await pool.query(sql, params);
@@ -126,18 +135,30 @@ class ServiceRepository {
   ) {
     try {
       let sql = 
-        `SELECT
-          s.service_id,
-          s.user_id,
-          s."name",
-          s.category_id,
-          s.provider_name,
-          s.description,
-          s.price,
-          s.unit_id,
-          s.payment_method_ids,
-          s."location"
-        FROM services.service s
+        `WITH serv AS (
+          SELECT
+            s.service_id,
+            s.user_id,
+            s."name",
+            s.category_id,
+            s.provider_name,
+            s.description,
+            s.price,
+            s.unit_id,
+            s.payment_method_ids,
+            s."location",
+            ARRAY_AGG(JSON_BUILD_OBJECT(
+              'serviceFileId', sf.service_file_id,
+              'serviceId', sf.service_id,
+              'externalId', sf.external_id,
+              'name', sf."name" 
+            )) images
+          FROM services.service s
+          JOIN services.service_file sf ON sf.service_id = s.service_id 
+          GROUP BY s.service_id 
+        )
+        SELECT *
+        FROM serv
         WHERE 1=1 $replaceFilterText $replaceFilterId $replaceFilterBool $replaceUser
         ORDER BY $replaceOrderColumn
         LIMIT $replaceLimitIndex 

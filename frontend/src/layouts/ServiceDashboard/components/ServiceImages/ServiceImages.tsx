@@ -1,7 +1,6 @@
 import { Stack } from "@mui/material";
 import MDBox from "components/MDBox";
 import { ServiceFile } from "models/service-file.model";
-import { Service } from "models/Service.model";
 import { useState } from "react";
 import ImgsViewer from "react-images-viewer";
 
@@ -13,12 +12,17 @@ const imgBaseUrl = process.env.REACT_APP_IMG_BASE_URL;
 const imgDefaultBaseUrl = process.env.REACT_APP_IMG_BASE_URL_DEFAULT_PRODUCT_IMG;
 
 export const ServiceImages = ({ images }: Props): JSX.Element => {
-  const imgs =
-    images && images.length > 0
-      ? images.map((img) => {
-          return { src: `${imgBaseUrl}/${img.externalId}/${img.name}` };
-        })
-      : [{ src: imgDefaultBaseUrl }];
+  console.log(images);
+  const imgs = images.map((img) => {
+    return { src: img.externalId };
+  });
+  // const imgs =
+  //   images && images.length > 0
+  //     ? images.map((img) => {
+  //         return { src: img.externalId };
+  //       })
+  //     : [{ src: imgDefaultBaseUrl }];
+  console.log(imgs);
   const [currentImage, setCurrentImage] = useState<string>(imgs[0].src);
   const [imgsViewer, setImgsViewer] = useState<boolean | number>(false);
   const [imgsViewerCurrent, setImgsViewerCurrent] = useState<number>(0);
@@ -54,25 +58,27 @@ export const ServiceImages = ({ images }: Props): JSX.Element => {
         onClick={openImgsViewer}
       />
       <MDBox mt={2} pt={1}>
-        <Stack direction="row" spacing={3}>
-          {imgs.map((img) => {
-            return (
-              <MDBox
-                key={img.src}
-                component="img"
-                id="0"
-                src={img.src}
-                borderRadius="lg"
-                shadow="md"
-                width="100%"
-                height="5rem"
-                minHeight="5rem"
-                sx={{ cursor: "pointer", objectFit: "cover" }}
-                onClick={handleSetCurrentImage}
-              />
-            );
-          })}
-        </Stack>
+        {imgs.length > 1 && (
+          <Stack direction="row" spacing={3}>
+            {imgs.map((img) => {
+              return (
+                <MDBox
+                  key={img.src}
+                  component="img"
+                  id="0"
+                  src={img.src}
+                  borderRadius="lg"
+                  shadow="md"
+                  width="100%"
+                  height="5rem"
+                  minHeight="5rem"
+                  sx={{ cursor: "pointer", objectFit: "cover" }}
+                  onClick={handleSetCurrentImage}
+                />
+              );
+            })}
+          </Stack>
+        )}
       </MDBox>
     </MDBox>
   );

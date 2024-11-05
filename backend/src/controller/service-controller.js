@@ -125,7 +125,7 @@ class ServiceController {
       let serviceDto = new Service(req.body);
       serviceDto.userId = req.user.userId;
       const service = await new ServiceRepository().createService(serviceDto);
-      return res.status(200).send({ msg: "Success", service });
+      return res.status(200).send({ service });
     } catch (error) {
       logger.error(`Ocorreu um erro ao tentar criar o serviço. ${whereAndStackError(__filename, error)}`);
       return res.status(400).send({ 
@@ -144,7 +144,7 @@ class ServiceController {
 
       let serviceDto = new Service(req.body);
       const service = await new ServiceRepository().updateService(serviceDto);
-      return res.status(200).send({ msg: "Success", service });
+      return res.status(200).send({ service });
     } catch (error) {
       logger.error(`Ocorreu um erro ao tentar atualizar o serviço. ${whereAndStackError(__filename, error)}`);
       return res.status(400).send({ 
