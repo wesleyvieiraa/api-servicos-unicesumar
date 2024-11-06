@@ -152,19 +152,21 @@ class ServiceRepository {
               'serviceId', sf.service_id,
               'externalId', sf.external_id,
               'name', sf."name" 
-            )) images
+            )) images,
+            COUNT(*) OVER() AS total_rows
           FROM services.service s
-          JOIN services.service_file sf ON sf.service_id = s.service_id 
+          JOIN services.service_file sf ON sf.service_id = s.service_id
+          WHERE $replaceUser
           GROUP BY s.service_id 
         )
         SELECT *
         FROM serv
-        WHERE 1=1 $replaceFilterText $replaceFilterId $replaceFilterBool $replaceUser
+        WHERE 1=1 $replaceFilterText $replaceFilterId $replaceFilterBool 
         ORDER BY $replaceOrderColumn
         LIMIT $replaceLimitIndex 
         OFFSET $replaceOffsetIndex;`;
 
-      sql = sql.replace("$replaceUser", `AND user_id ${toLogico(filterBoolMap.get("myServices")) ? "=" : "<>"} ${filterIdMap.get("userId")}`);
+      sql = sql.replace("$replaceUser", ` s.user_id ${toLogico(filterBoolMap.get("myServices")) ? "=" : "<>"} ${filterIdMap.get("userId")}`);
       filterBoolMap.delete("myServices");
       filterIdMap.delete("userId");
 
@@ -180,7 +182,7 @@ class ServiceRepository {
   
       const result = await pool.query(customQuery.stringSql, customQuery.paramValues);
       const services = factory(result.rows, Service);
-      return { services, totalRows: result.rowCount };
+      return { services, totalRows: result.rowCount > 0 ? Number(result.rows[0].total_rows) : 0 };
     } catch (error) {
       logger.error(`Ocorreu um erro ao listar os serviços. ${whereAndStackError(__filename, error)}`);
       throw new Error("Ocorreu um erro ao listar os serviços.");
