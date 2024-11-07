@@ -1,5 +1,6 @@
 import { Grid, Icon, Tooltip } from "@mui/material";
 import MDBox from "components/MDBox";
+import MDPagination from "components/MDPagination";
 import MDTypography from "components/MDTypography";
 import BookingCard from "examples/Cards/BookingCard";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -13,8 +14,12 @@ const imgBaseUrl = process.env.REACT_APP_IMG_BASE_URL;
 const imgDefaultBaseUrl = process.env.REACT_APP_IMG_BASE_URL_DEFAULT_PRODUCT_IMG;
 
 export const SearchService = (): JSX.Element => {
-  const [serviceList, setProductList] = useState<Service[]>([]);
+  const [serviceList, setServiceList] = useState<Service[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10; // Número de itens por página
   const navigate = useNavigate();
+
   const nav = (serviceId: number) => {
     navigate(`/servico/${serviceId}`);
   };
@@ -22,22 +27,59 @@ export const SearchService = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
-        const { services, totalRows } = await servicesService.list(null, null, null, 1, false);
-        setProductList(services);
+          const { services, totalRows } = await servicesService.list(
+          null,
+          null,
+          null,
+          currentPage,
+          false
+        );
+        
+        setServiceList(services || []);
+        setTotalPages(Math.ceil(totalRows / itemsPerPage)); // Calcular número total de páginas
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching services:", error);
       }
     };
+
     listServices();
-  }, []);
+  }, [currentPage]);
+
+  // Filtrar itens para exibir apenas os itens da página atual
+  const displayedServices = serviceList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const renderPaginationItems = () => {
+    const items = [];
+    for (let i = 1; i <= totalPages; i++) {
+      items.push(
+        <MDPagination
+          item
+          key={i}
+          active={i === currentPage}
+          onClick={() => handlePageChange(null, i)}
+        >
+          {i}
+        </MDPagination>
+      );
+    }
+    return items;
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviços" title="Procurar Serviço" />
       <MDBox py={3}>
         <MDBox mt={2}>
           <Grid container spacing={3}>
-            {serviceList.length > 0 &&
-              serviceList.map((service) => (
+            {displayedServices.length > 0 &&
+              displayedServices.map((service) => (
                 <Grid
                   item
                   xs={12}
@@ -62,6 +104,24 @@ export const SearchService = (): JSX.Element => {
                 </Grid>
               ))}
           </Grid>
+        </MDBox>
+        <MDBox mt={4} display="flex" justifyContent="center">
+          <MDPagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            size="small"
+          >
+            {renderPaginationItems()}
+            <MDPagination
+              item
+              onClick={() => handlePageChange(null, currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <Icon>keyboard_arrow_right</Icon>
+            </MDPagination>
+          </MDPagination>
         </MDBox>
       </MDBox>
     </DashboardLayout>

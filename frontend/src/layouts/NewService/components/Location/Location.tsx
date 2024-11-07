@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, LoadScript, Autocomplete, Circle, Marker } from "@react-google-maps/api";
 import MDBox from "components/MDBox";
 import FormField from "layouts/applications/wizard/components/FormField";
@@ -28,9 +28,18 @@ const geocodeLatLng = async (lat: number, lng: number, apiKey: string) => {
 
 export const Location = ({ formData }: any): JSX.Element => {
   const [center, setCenter] = useState(defaultCenter);
-  const [radius, setRadius] = useState(1000); // Define um raio padrão (em metros)
+  const [radius, setRadius] = useState(1000);
   const [address, setAddress] = useState<string | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const { formField, values } = formData;
+  const { location } = formField;
+  useEffect(() => {
+    if (address !== null) {
+      formData.values.location = address;
+    }
+    formData.values.radius = radius;
+  }, [address, radius, formData.values]);
 
   const handlePlaceSelected = useCallback(async () => {
     if (autocompleteRef.current) {
@@ -60,8 +69,6 @@ export const Location = ({ formData }: any): JSX.Element => {
       };
       setCenter(newCenter);
 
-      console.log(newCenter.lat, newCenter.lng);
-
       const foundAddress = await geocodeLatLng(newCenter.lat, newCenter.lng, API_KEY);
       setAddress(foundAddress);
     }
@@ -70,12 +77,7 @@ export const Location = ({ formData }: any): JSX.Element => {
   return (
     <MDBox style={{ marginTop: "10px" }}>
       <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
-        <GoogleMap
-          mapContainerStyle={mapStyles}
-          zoom={13}
-          center={center}
-          onClick={handleMapClick} // Listener para o clique no mapa
-        >
+        <GoogleMap mapContainerStyle={mapStyles} zoom={13} center={center} onClick={handleMapClick}>
           <Autocomplete
             onLoad={(ref) => (autocompleteRef.current = ref)}
             onPlaceChanged={handlePlaceSelected}
