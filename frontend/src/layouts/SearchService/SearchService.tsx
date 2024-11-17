@@ -17,7 +17,7 @@ export const SearchService = (): JSX.Element => {
   const [serviceList, setServiceList] = useState<Service[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 9; // Número de itens por página
+  const itemsPerPage = 10; // Número de itens por página
   const navigate = useNavigate();
 
   const nav = (serviceId: number) => {
@@ -27,16 +27,14 @@ export const SearchService = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
-        console.log("Fetching page:", currentPage);
-        const { services, totalRows } = await servicesService.list(
+          const { services, totalRows } = await servicesService.list(
           null,
           null,
           null,
           currentPage,
           false
         );
-        console.log("Fetched Services:", services, "Total Rows:", totalRows);
-
+        
         setServiceList(services || []);
         setTotalPages(Math.ceil(totalRows / itemsPerPage)); // Calcular número total de páginas
       } catch (error) {

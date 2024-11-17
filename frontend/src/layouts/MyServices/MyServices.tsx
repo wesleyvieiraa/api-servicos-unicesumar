@@ -17,7 +17,7 @@ export const MyServices = (): JSX.Element => {
   const [serviceList, setServiceList] = useState<Service[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 3; // Número de itens por página
+  const itemsPerPage = 10; // Número de itens por página
   const navigate = useNavigate();
 
   const nav = (serviceId: number) => {
@@ -27,7 +27,6 @@ export const MyServices = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
-        console.log("Fetching page:", currentPage);
         const { services, totalRows } = await servicesService.list(
           null,
           null,
@@ -35,7 +34,6 @@ export const MyServices = (): JSX.Element => {
           currentPage,
           true
         );
-        console.log("API response:", { services, totalRows });
 
         setServiceList(services);
 
