@@ -1,7 +1,8 @@
 export interface ContractServiceModel {
-  scheduleId?: number;
+  id?: number;
   serviceId: number;
   schedulerUserId?: number;
   appointmentDate: string;
   obs?: string;
+  approved?: boolean;
 }

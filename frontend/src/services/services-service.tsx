@@ -36,8 +36,19 @@ class ServicesService {
     return await httpService.put(`${this.baseUrl}/update`, payload);
   };
 
+  listMySchedules = async () => {
+    return await httpService.get(`${this.baseUrlSchedule}/list-my-schedules`);
+  };
+
   contractService = async (payload: ContractServiceModel) => {
     return await httpService.post(`${this.baseUrlSchedule}/create`, payload);
+  };
+
+  approveDisapproveSchedule = async (scheduleId: number, approved: boolean) => {
+    return await httpService.put(
+      `${this.baseUrlSchedule}/approve-disapprove/${scheduleId}/${approved}`,
+      {}
+    );
   };
 }
 

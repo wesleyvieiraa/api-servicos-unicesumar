@@ -31,8 +31,58 @@ class ServiceScheduleRepository {
       const result = await pool.query(sql, params);
       return result.rowCount > 0 ? (factory(result.rows, ServiceSchedule))[0] : null;
     } catch (error) {
-      logger.error(`Ocorreu um erro ao tentar criar um agendamento. ${whereAndStackError(__filename, error)}`);
-      throw new Error("Ocorreu um erro ao tentar criar um agendamento.");
+      logger.error(`Ocorreu um erro ao criar um agendamento. ${whereAndStackError(__filename, error)}`);
+      throw new Error("Ocorreu um erro ao criar um agendamento.");
+    }
+  }
+
+  /**
+   * 
+   * @param {integer} userId 
+   * @returns {Promise<Array<ServiceSchedule>>}
+   */
+  async listSchedulesByUserId(userId) {
+    try {
+      const sql = `
+      SELECT 
+        ss.id,
+        ss.service_id,
+        ss.scheduler_user_id,
+        ss.appointment_date,
+        ss.obs 
+      FROM services.service_schedule ss
+      JOIN services.service s ON s.service_id = ss.service_id
+      WHERE s.user_id = $1;`;
+
+      const params = [userId];
+      const result = await pool.query(sql, params);
+      return factory(result.rows, ServiceSchedule);
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao listar os agendamentos. ${whereAndStackError(__filename, error)}`);
+      throw new Error("Ocorreu um erro ao listar os agendamentos.");
+    }
+  }
+
+  /**
+   * 
+   * @param {integer} scheduleId 
+   * @param {boolean} approved 
+   * @returns {Promise<ServiceSchedule>}
+   */
+  async approveDisapproveSchedule(scheduleId, approved) {
+    try {
+      const sql = `
+        UPDATE services.service_schedule
+        SET approved = $2
+        WHERE id = $1
+        RETURNING *;`;
+
+      const params = [scheduleId, approved];
+      const result = await pool.query(sql, params);
+      return result.rowCount > 0 ? (factory(result.rows, ServiceSchedule))[0] : null;
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao ${approved ? "aprovar" : "reprovar"} o agendamento. ${whereAndStackError(__filename, error)}`);
+      throw new Error(`Ocorreu um erro ao ${approved ? "aprovar" : "reprovar"} o agendamento.`);
     }
   }
 }
