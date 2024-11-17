@@ -27,14 +27,14 @@ export const SearchService = (): JSX.Element => {
   useEffect(() => {
     const listServices = async () => {
       try {
-          const { services, totalRows } = await servicesService.list(
+        const { services, totalRows } = await servicesService.list(
           null,
           null,
           null,
           currentPage,
           false
         );
-        
+
         setServiceList(services || []);
         setTotalPages(Math.ceil(totalRows / itemsPerPage)); // Calcular número total de páginas
       } catch (error) {
