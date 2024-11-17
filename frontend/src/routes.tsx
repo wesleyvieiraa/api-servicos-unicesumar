@@ -27,6 +27,7 @@ import SearchService from "layouts/SearchService";
 import EditService from "layouts/EditService";
 import ServiceDashboard from "layouts/ServiceDashboard";
 import ContractService from "layouts/ContractService";
+import MySchedules from "layouts/MySchedules";
 
 const routes = [
   {
@@ -88,6 +89,16 @@ const routes = [
     component: <ContractService />,
     noCollapse: true,
     hide: true,
+  },
+  {
+    type: "collapse",
+    name: "Meus Agendamentos",
+    key: "mySchedules",
+    icon: <Icon fontSize="small">event</Icon>,
+    route: "/meus-agendamentos",
+    component: <MySchedules />,
+    noCollapse: true,
+    hide: false,
   },
   {
     type: "auth",

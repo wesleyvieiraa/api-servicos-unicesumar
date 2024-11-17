@@ -41,7 +41,7 @@ export const Dashboard = (): JSX.Element => {
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5} onClick={() => nav("/novo-servico")} sx={{ cursor: "pointer" }}>
-              <ComplexStatisticsCard color="success" icon="" title="Novo Serviço" />
+              <ComplexStatisticsCard color="success" icon="add" title="Novo Serviço" />
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
@@ -52,6 +52,11 @@ export const Dashboard = (): JSX.Element => {
                 title="Meus serviços"
                 count={totalValues.totalMyServices}
               />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5} onClick={() => nav("/meus-agendamentos")} sx={{ cursor: "pointer" }}>
+              <ComplexStatisticsCard color="warning" icon="event" title="Meus agendamentos" />
             </MDBox>
           </Grid>
         </Grid>
