@@ -1,8 +1,11 @@
 import { Service } from "models/Service.model";
 import httpService from "./http.service";
+import { ContractServiceModel } from "models/ContractService.model";
 
 class ServicesService {
   private baseUrl = "/service";
+  private baseUrlSchedule = "/service/schedule";
+
   list = async (
     name: string = null,
     categoryId: string = null,
@@ -31,6 +34,10 @@ class ServicesService {
 
   update = async (payload: Service) => {
     return await httpService.put(`${this.baseUrl}/update`, payload);
+  };
+
+  contractService = async (payload: ContractServiceModel) => {
+    return await httpService.post(`${this.baseUrlSchedule}/create`, payload);
   };
 }
 

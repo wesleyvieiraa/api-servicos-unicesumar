@@ -35,6 +35,7 @@ class AppController {
     this.express.use("/api/v1/dashboard", require("./routes/dashboard-routes"));
     this.express.use("/api/v1/service", require("./routes/service-routes"));
     this.express.use("/api/v1/service/file", require("./routes/service-file-routes"));
+    this.express.use("/api/v1/service/schedule", require("./routes/service-schedule-routes"));
 
     /** React */
     this.express.get('/*', (req, res) => {

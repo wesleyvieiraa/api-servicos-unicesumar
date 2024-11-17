@@ -26,6 +26,7 @@ import MyServices from "layouts/MyServices";
 import SearchService from "layouts/SearchService";
 import EditService from "layouts/EditService";
 import ServiceDashboard from "layouts/ServiceDashboard";
+import ContractService from "layouts/ContractService";
 
 const routes = [
   {
@@ -62,6 +63,7 @@ const routes = [
         route: "/editar-servico/:serviceId",
         component: <EditService />,
         type: "title",
+        hide: true,
       },
       {
         name: "Meus Serviços",
@@ -74,8 +76,18 @@ const routes = [
         key: "service",
         route: "/servico/:serviceId",
         component: <ServiceDashboard />,
+        hide: true,
       },
     ],
+  },
+  {
+    type: "collapse",
+    name: "Contratar Servico",
+    key: "contractService",
+    route: "/contratar-servico/:serviceId",
+    component: <ContractService />,
+    noCollapse: true,
+    hide: true,
   },
   {
     type: "auth",

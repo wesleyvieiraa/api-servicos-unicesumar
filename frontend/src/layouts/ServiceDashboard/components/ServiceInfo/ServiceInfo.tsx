@@ -4,6 +4,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import { Service } from "models/Service.model";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   service: Service;
@@ -19,6 +20,12 @@ export const ServiceInfo = ({ service }: Props): JSX.Element => {
   ];
   const foundedOption = optionsUnit.find((opt) => opt.id == service.unitId);
   const unitLabel = foundedOption ? foundedOption.label : "unidade desconhecida";
+
+  const navigate = useNavigate();
+
+  const nav = (serviceId: number) => {
+    navigate(`/contratar-servico/${serviceId}`);
+  };
 
   return (
     <MDBox>
@@ -45,19 +52,9 @@ export const ServiceInfo = ({ service }: Props): JSX.Element => {
           <MDTypography fontSize="small">por {unitLabel}</MDTypography>
         </MDTypography>
       </MDBox>
-      <MDBox mt={3} mb={1} ml={0.5}>
-        <MDTypography variant="button" fontWeight="regular" color="text">
-          Descrição
-        </MDTypography>
-      </MDBox>
       <MDBox m={0} mb={2}>
         <MDTypography variant="body2" color="text" fontWeight="regular" verticalAlign="middle">
           {service.description}
-        </MDTypography>
-      </MDBox>
-      <MDBox mt={3} mb={1} ml={0.5}>
-        <MDTypography variant="button" fontWeight="regular" color="text">
-          Localização
         </MDTypography>
       </MDBox>
       <MDBox m={0} mb={2}>
@@ -67,8 +64,13 @@ export const ServiceInfo = ({ service }: Props): JSX.Element => {
       </MDBox>
       <MDBox mt={3}>
         <Grid item xs={12} lg={5} container>
-          <MDButton variant="gradient" color="info" fullWidth>
-            Saber mais
+          <MDButton
+            variant="gradient"
+            color="info"
+            fullWidth
+            onClick={() => nav(service.serviceId)}
+          >
+            Contratar
           </MDButton>
         </Grid>
       </MDBox>

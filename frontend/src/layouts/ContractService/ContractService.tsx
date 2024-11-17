@@ -1,25 +1,23 @@
 import { Card, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import Footer from "examples/Footer";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { useState } from "react";
-import BasicInformations from "./components/BasicInformations";
-import Location from "./components/Location";
-import Details from "./components/Details";
-import Media from "./components/Media";
-import servicesService from "services/services-service";
-import { Service } from "models/Service.model";
-import serviceForm from "./schemas/serviceForm";
-import validations from "./schemas/serviceValidations";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
-import initialValuesServiceForm from "./schemas/initialValues";
-import MDButton from "components/MDButton";
-import servicesFileService from "services/services-file-service";
+import { useState } from "react";
+import contractServiceForm from "./schemas/contractServiceForm";
+import validations from "./schemas/contractServiceValidations";
+import initialValuesContractServiceForm from "./schemas/initialValues";
+import BasicInformations from "./components/StepOne/BasicInformations";
+import Details from "./components/StepTwo/Details";
+import { ContractServiceModel } from "models/ContractService.model";
+import servicesService from "services/services-service";
+import { useParams } from "react-router-dom";
 
 function getSteps(): string[] {
-  return ["Informações básicas", "Detalhes", "Localização", "Imagens"];
+  return ["Agendamento"];
 }
 
 function getStepContent(stepIndex: number, formData: any, setFieldValue: any): JSX.Element {
@@ -27,89 +25,79 @@ function getStepContent(stepIndex: number, formData: any, setFieldValue: any): J
     case 0:
       return <BasicInformations formData={formData} />;
     case 1:
-      return <Details formData={formData} />;
-    case 2:
-      return <Location />;
-    case 3:
-      return <Media formData={formData} setFieldValue={setFieldValue} />;
+      return <Details />;
     default:
       return null;
   }
 }
 
-export const NewService = (): JSX.Element => {
+export const ContractService = (): JSX.Element => {
+  const { serviceId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
-  const { formId, formField } = serviceForm;
+  const { formId, formField } = contractServiceForm;
   const currentValidation = validations[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
   const handleBack = (data: any) => setActiveStep(activeStep - 1);
 
-  const submitForm = async (values: Service, actions: FormikHelpers<Service>) => {
+  const submitForm = async (
+    values: ContractServiceModel,
+    actions: FormikHelpers<ContractServiceModel>
+  ) => {
     try {
-      const images = values.images ? values.images : [];
-
-      if (images && images.length > 0) {
-        if (images.length > 5) {
-          console.error("É permitido no máximo de 5 imagens por vez.");
-          actions.setSubmitting(false);
-          return;
-        }
-        values.images = null;
-      }
-
-      const formData = new FormData();
-      images.forEach((file: any, index) => {
-        formData.append("files", file);
-      });
-
-      const { service } = await servicesService.create(values);
-
-      if (service && service.hasOwnProperty("serviceId") && formData) {
-        await servicesFileService.uploadImages(formData, service.serviceId);
-      }
+      values.serviceId = Number(serviceId);
+      const { service } = await servicesService.contractService(values);
 
       actions.setSubmitting(false);
       actions.resetForm();
-      setActiveStep(0);
     } catch (error) {
       actions.setSubmitting(false);
       console.error(error);
     }
   };
 
-  const handleSubmit = (values: Service, actions: FormikHelpers<Service>) => {
-    if (isLastStep) {
-      submitForm(values, actions);
-    } else {
-      setActiveStep(activeStep + 1);
-      actions.setTouched({});
-      actions.setSubmitting(false);
-    }
+  const handleSubmit = (
+    values: ContractServiceModel,
+    actions: FormikHelpers<ContractServiceModel>
+  ) => {
+    submitForm(values, actions);
+    setActiveStep(activeStep + 1);
+    // if (isLastStep) {
+    // } else {
+    //   setActiveStep(activeStep + 1);
+    //   actions.setTouched({});
+    //   actions.setSubmitting(false);
+    // }
   };
 
   return (
     <DashboardLayout>
-      <DashboardNavbar titleToBradcrumb="Serviço" title="Novo Serviço" />
+      <DashboardNavbar titleToBradcrumb="Serviços" title="Contratar Serviço" />
       <MDBox mb={9}>
         <Grid container justifyContent="center" alignItems="center" sx={{ height: "100%" }}>
           <Grid item xs={12} lg={8}>
             <Formik
-              initialValues={initialValuesServiceForm}
+              initialValues={initialValuesContractServiceForm}
               validationSchema={currentValidation}
               onSubmit={handleSubmit}
             >
-              {({ values, errors, touched, isSubmitting, setFieldValue }: FormikProps<Service>) => (
+              {({
+                values,
+                errors,
+                touched,
+                isSubmitting,
+                setFieldValue,
+              }: FormikProps<ContractServiceModel>) => (
                 <Form id={formId} autoComplete="off">
                   <MDBox mt={6} mb={8} textAlign="center">
                     <MDBox mb={1}>
                       <MDTypography variant="h3" fontWeight="bold">
-                        Cadastrar Novo Serviço
+                        Contratar Serviço
                       </MDTypography>
                     </MDBox>
                     <MDTypography variant="h5" fontWeight="regular" color="secondary">
-                      Estas informações descreverão mais sobre o serviço prestado.
+                      Agende uma data para o serviço.
                     </MDTypography>
                   </MDBox>
                   <Card sx={{ height: "100%" }}>
@@ -130,21 +118,16 @@ export const NewService = (): JSX.Element => {
                           setFieldValue
                         )}
                         <MDBox mt={2} width="100%" display="flex" justifyContent="space-between">
-                          {activeStep === 0 ? (
-                            <MDBox />
-                          ) : (
-                            <MDButton variant="gradient" color="light" onClick={handleBack}>
-                              voltar
+                          {activeStep === 0 && (
+                            <MDButton
+                              disabled={isSubmitting}
+                              type="submit"
+                              variant="gradient"
+                              color="dark"
+                            >
+                              {isLastStep ? "enviar" : "próximo"}
                             </MDButton>
                           )}
-                          <MDButton
-                            disabled={isSubmitting}
-                            type="submit"
-                            variant="gradient"
-                            color="dark"
-                          >
-                            {isLastStep ? "enviar" : "próximo"}
-                          </MDButton>
                         </MDBox>
                       </MDBox>
                     </MDBox>

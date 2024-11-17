@@ -79,21 +79,21 @@ export const ServiceDashboard = (): JSX.Element => {
                 <ServiceInfo service={service} />
               </Grid>
             </Grid>
-            {otherServicesList && otherServicesList.length > 0 && (
+            {/* {otherServicesList && otherServicesList.length > 0 && (
               <MDBox mt={8} mb={2}>
                 <MDBox mb={1} ml={2}>
                   <MDTypography variant="h5" fontWeight="medium">
                     Outros serviços do mesmo prestador
                   </MDTypography>
                 </MDBox>
-                {/* <DataTable
+                <DataTable
                   table={dataTableData}
                   entriesPerPage={false}
                   showTotalEntries={false}
                   isSorted={false}
-                /> */}
+                />
               </MDBox>
-            )}
+            )} */}
           </MDBox>
         </Card>
       </MDBox>

@@ -121,8 +121,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
   };
   // Render the all the collpases from the routes.js
   const renderCollapse = (collapses: any) =>
-    collapses.map(({ name, collapse, route, href, key }: any) => {
+    collapses.map(({ name, collapse, route, href, key, hide }: any) => {
       let returnValue;
+
+      if (hide) {
+        return null;
+      }
 
       if (collapse) {
         returnValue = (
@@ -162,8 +166,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
     });
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(
-    ({ type, name, icon, title, collapse, noCollapse, key, href, route }: any) => {
+  const renderRoutes = routes
+    .filter((el) => !el.hide)
+    .map(({ type, name, icon, title, collapse, noCollapse, key, href, route }: any) => {
       let returnValue;
 
       if (type === "collapse") {
@@ -241,8 +246,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
       }
 
       return returnValue;
-    }
-  );
+    });
 
   return (
     <SidenavRoot
