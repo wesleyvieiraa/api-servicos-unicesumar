@@ -47,11 +47,6 @@ export const MyServices = (): JSX.Element => {
     listServices();
   }, [currentPage]);
 
-  const displayedServices = serviceList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
@@ -79,13 +74,13 @@ export const MyServices = (): JSX.Element => {
       <MDBox py={3}>
         <MDBox mt={2}>
           <Grid container spacing={3}>
-            {displayedServices.length > 0 &&
-              displayedServices.map((service) => (
+            {serviceList.length > 0 &&
+              serviceList.map((service) => (
                 <Grid item xs={12} md={6} lg={4} key={`${service.serviceId}-${service.name}`}>
                   <MDBox mt={3}>
                     <BookingCard
                       image={
-                        service.images && service.images.length > 0
+                        service.images[0].externalId
                           ? service.images[0].externalId
                           : imgDefaultBaseUrl
                       }

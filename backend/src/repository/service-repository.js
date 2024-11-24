@@ -113,7 +113,7 @@ class ServiceRepository {
           )) images,
           AVG(ss2.score) average
         FROM services.service s
-        JOIN services.service_file sf ON sf.service_id = s.service_id 
+        LEFT JOIN services.service_file sf ON sf.service_id = s.service_id 
         LEFT JOIN services.service_score ss2 ON ss2.service_id = s.service_id 
         WHERE s.service_id = $1
         GROUP BY s.service_id;`;
@@ -135,6 +135,7 @@ class ServiceRepository {
     filterBoolMap = new Map(),
     sortColumn = ['name', 'asc']
   ) {
+    console.log(offset)
     try {
       let sql = 
         `WITH serv AS (
@@ -157,7 +158,7 @@ class ServiceRepository {
             )) images,
             COUNT(*) OVER() AS total_rows
           FROM services.service s
-          JOIN services.service_file sf ON sf.service_id = s.service_id
+          LEFT JOIN services.service_file sf ON sf.service_id = s.service_id
           WHERE $replaceUser
           GROUP BY s.service_id 
         )
