@@ -50,6 +50,10 @@ class ServicesService {
       {}
     );
   };
+
+  giveScoreToService = async (scheduleId: number, score: number) => {
+    return await httpService.post(`${this.baseUrlSchedule}/score`, { scheduleId, score });
+  };
 }
 
 export default new ServicesService();
