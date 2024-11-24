@@ -8,21 +8,15 @@ interface Props {
   images: ServiceFile[];
 }
 
-const imgBaseUrl = process.env.REACT_APP_IMG_BASE_URL;
 const imgDefaultBaseUrl = process.env.REACT_APP_IMG_BASE_URL_DEFAULT_PRODUCT_IMG;
 
 export const ServiceImages = ({ images }: Props): JSX.Element => {
-  console.log(images);
-  const imgs = images.map((img) => {
-    return { src: img.externalId };
-  });
-  // const imgs =
-  //   images && images.length > 0
-  //     ? images.map((img) => {
-  //         return { src: img.externalId };
-  //       })
-  //     : [{ src: imgDefaultBaseUrl }];
-  console.log(imgs);
+  const imgs =
+    images && images.length > 0 && images[0].externalId
+      ? images.map((img) => {
+          return { src: img.externalId };
+        })
+      : [{ src: imgDefaultBaseUrl }];
   const [currentImage, setCurrentImage] = useState<string>(imgs[0].src);
   const [imgsViewer, setImgsViewer] = useState<boolean | number>(false);
   const [imgsViewerCurrent, setImgsViewerCurrent] = useState<number>(0);

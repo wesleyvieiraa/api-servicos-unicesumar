@@ -56,3 +56,4 @@ Em caso de dúvidas ou sugestões, entre em contato através do email: w.g20@hot
 ## Autores
 
 - [@wesleyvieiraa](https://github.com/wesleyvieiraa)
+- [@joaovitorchi](https://github.com/joaovitorchi)

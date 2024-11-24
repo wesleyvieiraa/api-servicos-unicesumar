@@ -152,6 +152,18 @@ class ServiceController {
       });
     }
   }
+
+  async insertScoreService(req, res) {
+    try {
+      const ret = await new ServiceRepository().insertScoreService(req.body.serviceId, req.body.score);
+      return res.status(200).send({ msg: "Avaliação feita com sucesso." });
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao tentar dar uma nota ao serviço. ${whereAndStackError(__filename, error)}`);
+      return res.status(400).send({ 
+        errors: [{ msg: error.message }] 
+      });
+    }
+  }
 }
 
 module.exports = new ServiceController();

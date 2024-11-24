@@ -110,9 +110,11 @@ class ServiceRepository {
             'serviceId', sf.service_id,
             'externalId', sf.external_id,
             'name', sf."name" 
-          )) images
+          )) images,
+          AVG(ss2.score) average
         FROM services.service s
-        JOIN services.service_file sf ON sf.service_id = s.service_id 
+        LEFT JOIN services.service_file sf ON sf.service_id = s.service_id 
+        LEFT JOIN services.service_score ss2 ON ss2.service_id = s.service_id 
         WHERE s.service_id = $1
         GROUP BY s.service_id;`;
 
@@ -133,6 +135,7 @@ class ServiceRepository {
     filterBoolMap = new Map(),
     sortColumn = ['name', 'asc']
   ) {
+    console.log(offset)
     try {
       let sql = 
         `WITH serv AS (
@@ -155,7 +158,7 @@ class ServiceRepository {
             )) images,
             COUNT(*) OVER() AS total_rows
           FROM services.service s
-          JOIN services.service_file sf ON sf.service_id = s.service_id
+          LEFT JOIN services.service_file sf ON sf.service_id = s.service_id
           WHERE $replaceUser
           GROUP BY s.service_id 
         )
@@ -186,6 +189,21 @@ class ServiceRepository {
     } catch (error) {
       logger.error(`Ocorreu um erro ao listar os serviços. ${whereAndStackError(__filename, error)}`);
       throw new Error("Ocorreu um erro ao listar os serviços.");
+    }
+  }
+
+  async insertScoreService(serviceId, score) {
+    try {
+      const sql = `
+        INSERT INTO services.service_score (service_id, score) VALUES ($1, $2)
+        RETURNING *;`;
+
+      const params = [serviceId, score];
+      const result = await pool.query(sql, params);
+      return result.rowCount > 0;
+    } catch (error) {
+      logger.error(`Ocorreu um erro ao dar uma nota ao serviço ${whereAndStackError(__filename, error)}`);
+      throw new Error(`Ocorreu um erro ao dar uma nota ao serviço`);
     }
   }
 }

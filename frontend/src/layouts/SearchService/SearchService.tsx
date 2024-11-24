@@ -45,12 +45,6 @@ export const SearchService = (): JSX.Element => {
     listServices();
   }, [currentPage]);
 
-  // Filtrar itens para exibir apenas os itens da página atual
-  const displayedServices = serviceList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
@@ -78,8 +72,8 @@ export const SearchService = (): JSX.Element => {
       <MDBox py={3}>
         <MDBox mt={2}>
           <Grid container spacing={3}>
-            {displayedServices.length > 0 &&
-              displayedServices.map((service) => (
+            {serviceList.length > 0 &&
+              serviceList.map((service) => (
                 <Grid
                   item
                   xs={12}
@@ -92,7 +86,7 @@ export const SearchService = (): JSX.Element => {
                   <MDBox mt={3}>
                     <BookingCard
                       image={
-                        service.images && service.images.length > 0
+                        service.images && service.images.length > 0 && service.images[0].externalId
                           ? service.images[0].externalId
                           : imgDefaultBaseUrl
                       }

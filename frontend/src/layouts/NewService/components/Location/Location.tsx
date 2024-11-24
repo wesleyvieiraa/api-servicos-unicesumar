@@ -33,7 +33,7 @@ export const Location = ({ formData }: any): JSX.Element => {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const { formField, values } = formData;
-  const { location } = formField;
+  const { lat, lng } = formField;
   useEffect(() => {
     if (address !== null) {
       formData.values.location = address;

@@ -35,11 +35,15 @@ export const ServiceInfo = ({ service }: Props): JSX.Element => {
         </MDTypography>
       </MDBox>
       <MDTypography variant="h4" color="text">
-        <Icon>star</Icon>
-        <Icon>star</Icon>
-        <Icon>star</Icon>
-        <Icon>star</Icon>
-        <Icon>star_half</Icon>
+        {[...Array(5)].map((_, index) => {
+          if (index < Math.floor(service.average)) {
+            return <Icon key={index}>star</Icon>;
+          } else if (index === Math.floor(service.average) && service.average % 1 !== 0) {
+            return <Icon key={index}>star_half</Icon>;
+          } else {
+            return <Icon key={index}>star_border</Icon>;
+          }
+        })}
       </MDTypography>
       <MDBox mt={1}>
         <MDTypography variant="h6" fontWeight="medium">

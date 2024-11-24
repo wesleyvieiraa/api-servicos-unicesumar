@@ -12,4 +12,5 @@ export interface Service {
   paymentMethodIds: number[];
   location?: string;
   images?: ServiceFile[];
+  average?: number;
 };

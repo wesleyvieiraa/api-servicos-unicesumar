@@ -13,8 +13,21 @@ export const BasicInformations = ({ formData }: any): JSX.Element => {
     description: descriptionV,
   } = values;
   const optionsCategory = [
-    { id: 1, label: "Categoria 1" },
-    { id: 2, label: "Categoria 2" },
+    { id: 1, label: "Doméstico" },
+    { id: 2, label: "Carros" },
+    { id: 3, label: "Saúde" },
+    { id: 4, label: "Beleza" },
+    { id: 5, label: "Tecnologia" },
+    { id: 6, label: "Educação" },
+    { id: 7, label: "Alimentação" },
+    { id: 8, label: "Transporte" },
+    { id: 9, label: "Construção" },
+    { id: 10, label: "Limpeza" },
+    { id: 11, label: "Jardinagem" },
+    { id: 12, label: "Consultoria" },
+    { id: 13, label: "Eventos" },
+    { id: 14, label: "Pet Care" },
+    { id: 15, label: "Móveis e Decoração" },
   ];
 
   return (

@@ -6,6 +6,8 @@ class ServiceSchedule {
     this.appointmentDate = dto.appointment_date || dto.appointmentDate;
     this.obs = dto.obs;
     this.approved = dto.approved;
+    this.userProvider = dto.user_provider || dto.userProvider;
+    this.userScheduler = dto.user_scheduler || dto.userScheduler;
   }
 }
 

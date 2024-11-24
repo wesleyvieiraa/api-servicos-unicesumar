@@ -162,9 +162,6 @@ function DashboardNavbar({
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label="Procurar" />
-            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton
                 size="small"
