@@ -29,7 +29,7 @@ function getStepContent(stepIndex: number, formData: any, setFieldValue: any): J
     case 1:
       return <Details formData={formData} />;
     case 2:
-      return <Location />;
+      return <Location formData={formData} />;
     case 3:
       return <Media formData={formData} setFieldValue={setFieldValue} />;
     default:
