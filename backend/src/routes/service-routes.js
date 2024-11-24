@@ -25,6 +25,14 @@ router.post(
   serviceController.createService
 );
 
+router.post(
+  "/score",
+  [
+    middlewareAuthorization("ADMIN"),
+  ],
+  serviceController.insertScoreService
+);
+
 /* PUT */
 router.put(
   "/update",
