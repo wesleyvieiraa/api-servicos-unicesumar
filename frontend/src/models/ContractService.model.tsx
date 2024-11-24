@@ -5,4 +5,6 @@ export interface ContractServiceModel {
   appointmentDate: string;
   obs?: string;
   approved?: boolean;
+  userProvider?: string;
+  userScheduler?: string;
 }

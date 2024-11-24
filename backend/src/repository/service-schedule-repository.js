@@ -50,9 +50,13 @@ class ServiceScheduleRepository {
         ss.scheduler_user_id,
         ss.appointment_date,
         ss.obs,
-        ss.approved
+        ss.approved,
+        u."name" user_provider,
+        u2."name" user_scheduler
       FROM services.service_schedule ss
       JOIN services.service s ON s.service_id = ss.service_id
+      JOIN users."user" u ON u.user_id = s.user_id 
+      JOIN users."user" u2 ON u2.user_id = ss.scheduler_user_id 
       WHERE s.user_id = $1;`;
 
       const params = [userId];
