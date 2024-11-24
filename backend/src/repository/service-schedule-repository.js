@@ -57,7 +57,7 @@ class ServiceScheduleRepository {
       JOIN services.service s ON s.service_id = ss.service_id
       JOIN users."user" u ON u.user_id = s.user_id 
       JOIN users."user" u2 ON u2.user_id = ss.scheduler_user_id 
-      WHERE s.user_id = $1;`;
+      WHERE (u.user_id = $1 OR u2.user_id = $1);`;
 
       const params = [userId];
       const result = await pool.query(sql, params);
