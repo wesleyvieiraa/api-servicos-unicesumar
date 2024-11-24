@@ -49,7 +49,8 @@ class ServiceScheduleRepository {
         ss.service_id,
         ss.scheduler_user_id,
         ss.appointment_date,
-        ss.obs 
+        ss.obs,
+        ss.approved
       FROM services.service_schedule ss
       JOIN services.service s ON s.service_id = ss.service_id
       WHERE s.user_id = $1;`;
