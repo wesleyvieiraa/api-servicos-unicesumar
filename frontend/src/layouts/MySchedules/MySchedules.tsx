@@ -5,10 +5,14 @@ import DataTable from "examples/Tables/DataTable";
 import servicesService from "services/services-service";
 import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import { decodeJWT } from "utils/decode-jwt";
 
 export const MySchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
+  const decodedUser = decodeJWT(token);
 
   const fetchSchedules = async () => {
     try {
