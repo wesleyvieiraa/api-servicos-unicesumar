@@ -7,4 +7,5 @@ export interface ContractServiceModel {
   approved?: boolean;
   userProvider?: string;
   userScheduler?: string;
+  average?: string;
 }

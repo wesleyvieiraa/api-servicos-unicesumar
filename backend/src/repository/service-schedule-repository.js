@@ -51,13 +51,18 @@ class ServiceScheduleRepository {
         ss.appointment_date,
         ss.obs,
         ss.approved,
+        u.user_id,
         u."name" user_provider,
-        u2."name" user_scheduler
+        u2.user_id,
+        u2."name" user_scheduler,
+        AVG(ss2.score) average
       FROM services.service_schedule ss
       JOIN services.service s ON s.service_id = ss.service_id
+      LEFT JOIN services.service_score ss2 ON ss2.service_id = s.service_id 
       JOIN users."user" u ON u.user_id = s.user_id 
       JOIN users."user" u2 ON u2.user_id = ss.scheduler_user_id 
-      WHERE (u.user_id = $1 OR u2.user_id = $1);`;
+      WHERE (u.user_id = $1 OR u2.user_id = $1)
+      GROUP BY ss.id, u.user_id, u2.user_id;`;
 
       const params = [userId];
       const result = await pool.query(sql, params);
