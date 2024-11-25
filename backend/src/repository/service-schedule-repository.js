@@ -59,8 +59,8 @@ class ServiceScheduleRepository {
       FROM services.service_schedule ss
       JOIN services.service s ON s.service_id = ss.service_id
       LEFT JOIN services.service_score ss2 ON ss2.service_id = s.service_id 
-      JOIN users."user" u ON u.user_id = s.user_id 
-      JOIN users."user" u2 ON u2.user_id = ss.scheduler_user_id 
+      JOIN users."user" u ON u.user_id = ss.user_id 
+      JOIN users."user" u2 ON u2.user_id = s.scheduler_user_id 
       WHERE (u.user_id = $1 OR u2.user_id = $1)
       GROUP BY ss.id, u.user_id, u2.user_id;`;
 
