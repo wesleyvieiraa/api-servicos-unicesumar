@@ -9,7 +9,7 @@ class UserGroupRepository {
         `INSERT INTO users.user_group (
           user_id, group_id 
         ) VALUES (
-          $1, $2
+          $1, 1
         ) RETURNING *;`;
 
       const result = await pool.query(sql, [userId, groupId]);
