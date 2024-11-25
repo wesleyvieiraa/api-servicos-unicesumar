@@ -72,7 +72,6 @@ export const MySchedules = () => {
   const rows = schedules.map((schedule) => {
     let status;
 
-    // Determinação do status com base no campo `approved`
     switch (schedule.approved) {
       case true:
         status = "Aceito";
@@ -84,13 +83,8 @@ export const MySchedules = () => {
         status = "Pendente";
     }
 
-    // Verificar se o usuário logado é o provider ou o scheduler para cada linha
     const isProvider = decodedUser?.userId !== schedule?.schedulerUserId;
     const isScheduler = decodedUser?.userId === schedule?.schedulerUserId;
-    console.log(isScheduler);
-
-    // Adicionar logs para depuração
-    console.log(decodedUser.userId);
 
     return {
       id: schedule.id,
@@ -102,7 +96,6 @@ export const MySchedules = () => {
       status,
       acoes: (
         <>
-          {/* Verifica se o usuário logado é o provider */}
           {isProvider && status === "Pendente" && (
             <>
               <MDButton
@@ -126,7 +119,6 @@ export const MySchedules = () => {
               </MDButton>
             </>
           )}
-          {/* Verifica se o usuário logado é o scheduler */}
           {isScheduler && status === "Aceito" && (
             <Rating
               name={`rating-${schedule.id}`}
