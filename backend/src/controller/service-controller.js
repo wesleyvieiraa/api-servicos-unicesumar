@@ -26,14 +26,7 @@ class ServiceController {
       body("unitId", "Unidade é inválida.")
         .isInt().withMessage("ID da unidade deve ser um número."),
       body("paymentMethodIds", "Métodos de pagamento é inválido.")
-        .isArray().withMessage("Métodos de pagamento deve ser um array.")
-        .custom((value) => {
-          const areAllIntegers = value.every((element) => Number.isInteger(element));
-          if (!areAllIntegers) {
-            throw new Error("Os valores do array de ID's dos métodos de pagamento devem ser todos números inteiros.");
-          }
-          return true;
-      }),
+        .isArray().withMessage("Métodos de pagamento deve ser um array."),
     ];
   }
 
@@ -59,14 +52,7 @@ class ServiceController {
       body("unitId", "Unidade é inválida.")
         .isInt().withMessage("ID da unidade deve ser um número."),
       body("paymentMethodIds", "Métodos de pagamento é inválido.")
-        .isArray().withMessage("Métodos de pagamento deve ser um array.")
-        .custom((value) => {
-          const areAllIntegers = value.every((element) => Number.isInteger(element));
-          if (!areAllIntegers) {
-            throw new Error("Os valores do array de ID's dos métodos de pagamento devem ser todos números inteiros.");
-          }
-          return true;
-      }),
+        .isArray().withMessage("Métodos de pagamento deve ser um array."),
     ];
   }
 

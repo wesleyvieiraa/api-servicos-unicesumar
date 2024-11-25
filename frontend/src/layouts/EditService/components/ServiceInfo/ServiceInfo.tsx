@@ -16,7 +16,7 @@ interface Props {
 
 export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
   const { formId, formField } = serviceForm;
-  const currentValidation = validations;
+  const currentValidation = validations[0];
   const { name, price, description, categoryId } = formField;
 
   const handleSubmit = (values: Service, actions: FormikHelpers<Service>) => {
