@@ -41,15 +41,6 @@ class UserController {
       body("password", "Senha deve ter 8 caracteres")
         .optional({ nullable: true, checkFalsy: true })
         .isLength({ min: 8, max: 50 }),
-      
-      body("typeUserId", "Tipo de usuário inválido")
-        .isInt()
-        .custom(value => {
-          if (!TYPE_USER_IDS.includes(value)) {
-            throw new Error("Tipo de usuário desconhecido.");
-          }
-          return true;
-        })
     ];
   }
 
@@ -71,7 +62,7 @@ class UserController {
 
       const userDto = new User(req.body);
       const user = await new UserRepository().createUser(userDto);
-      await self.associateUserGroup(user.userId, req.body.typeUserId);
+      await self.associateUserGroup(user.userId, 1);
       const token = await loginController.doLogin(req.body.email, req.body.password);
 
       return res.status(200).send({ msg: "Success.", token });

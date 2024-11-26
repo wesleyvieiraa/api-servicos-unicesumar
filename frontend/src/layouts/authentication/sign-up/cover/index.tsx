@@ -21,22 +21,16 @@ function Cover(): JSX.Element {
     name: string;
     email: string;
     password: string;
-    typeUserId: number;
     acceptTerms: boolean;
   }
 
   const authContext = useContext(AuthContext);
   const [credentialsErros, setCredentialsError] = useState(null);
-  const optionsTypesUser = [
-    { label: "Prestador de serviços", id: 1 },
-    { label: "Tomador de serviços", id: 2 },
-  ];
   const validationSchema: yup.ObjectSchema<FormData> = yup
     .object({
       name: yup.string().required("Campo obrigatório"),
       email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
       password: yup.string().required("Campo obrigatório"),
-      typeUserId: yup.number().required("Selecione seu tipo de usuário"),
       acceptTerms: yup.bool().oneOf([true], "Aceite os termos para continuar"),
     })
     .required();
@@ -110,35 +104,6 @@ function Cover(): JSX.Element {
                 error={errors.password}
               />
             </MDBox>
-            <MDBox mb={2}>
-              <Controller
-                name="typeUserId"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Autocomplete
-                    disableClearable
-                    options={optionsTypesUser}
-                    size="small"
-                    renderInput={(params) => (
-                      <FormField
-                        {...params}
-                        label="Tipo de usuário"
-                        placeholder="Selecione"
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    )}
-                    getOptionLabel={(option) => option.label}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    onChange={(event, newValue) => onChange(newValue.id)}
-                  />
-                )}
-              />
-            </MDBox>
-            {errors.typeUserId && (
-              <MDTypography variant="caption" color="error" fontWeight="light">
-                {errors.typeUserId.message}
-              </MDTypography>
-            )}
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Checkbox {...register("acceptTerms")} />
               <MDTypography
