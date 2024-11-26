@@ -2,6 +2,7 @@ import { Grid, Icon, Tooltip } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDPagination from "components/MDPagination";
 import MDTypography from "components/MDTypography";
+import MDAlert from "components/MDAlert";
 import BookingCard from "examples/Cards/BookingCard";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -17,7 +18,8 @@ export const MyServices = (): JSX.Element => {
   const [serviceList, setServiceList] = useState<Service[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10; // Número de itens por página
+  const [error, setError] = useState<string | null>(null);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   const nav = (serviceId: number) => {
@@ -40,12 +42,21 @@ export const MyServices = (): JSX.Element => {
         const calculatedTotalPages = Math.ceil(totalRows / itemsPerPage);
         setTotalPages(calculatedTotalPages);
       } catch (error) {
-        console.error("Error fetching services:", error);
+        setError("Erro ao buscar os serviços. Tente novamente mais tarde.");
       }
     };
 
     listServices();
   }, [currentPage]);
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
@@ -73,6 +84,11 @@ export const MyServices = (): JSX.Element => {
       <DashboardNavbar titleToBradcrumb="Serviços" title="Meus Serviços" />
       <MDBox py={3}>
         <MDBox mt={2}>
+          {error && (
+            <MDBox mb={3}>
+              <MDAlert color="error">{error}</MDAlert>
+            </MDBox>
+          )}
           <Grid container spacing={3}>
             {serviceList.length > 0 &&
               serviceList.map((service) => (

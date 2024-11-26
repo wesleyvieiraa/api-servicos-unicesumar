@@ -6,10 +6,15 @@ import servicesService from "services/services-service";
 import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { decodeJWT } from "utils/decode-jwt";
+import Rating from "@mui/material/Rating";
+import MDAlert from "components/MDAlert";
 
 export const MySchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [disabledRatings, setDisabledRatings] = useState<{ [key: number]: boolean }>({});
 
   const token = localStorage.getItem("token");
   const decodedUser = decodeJWT(token);
@@ -20,11 +25,11 @@ export const MySchedules = () => {
       if (response.schedules && Array.isArray(response.schedules)) {
         setSchedules(response.schedules);
       } else {
-        console.error("Formato inesperado da resposta:", response);
+        setError("Formato inesperado da resposta.");
         setSchedules([]);
       }
     } catch (error) {
-      console.error("Erro ao buscar agendamentos:", error);
+      setError("Erro ao buscar agendamentos.");
       setSchedules([]);
     } finally {
       setIsLoading(false);
@@ -38,18 +43,29 @@ export const MySchedules = () => {
   const handleScheduleApproval = async (scheduleId: number, approved: boolean) => {
     try {
       await servicesService.approveDisapproveSchedule(scheduleId, approved);
-      alert(`Agendamento ${approved ? "aceito" : "rejeitado"} com sucesso!`);
+      setSuccess(`Agendamento ${approved ? "aceito" : "rejeitado"} com sucesso!`);
       fetchSchedules();
     } catch (error) {
-      console.error("Erro ao atualizar o status do agendamento:", error);
-      alert("Não foi possível atualizar o status do agendamento. Tente novamente.");
+      setError("Erro ao atualizar o status do agendamento.");
+    }
+  };
+
+  const giveScoreToService = async (serviceId: number, score: number) => {
+    try {
+      await servicesService.giveScoreToService(serviceId, score);
+      setSuccess("Avaliação registrada com sucesso!");
+      setDisabledRatings((prev) => ({ ...prev, [serviceId]: true }));
+      fetchSchedules();
+    } catch (error) {
+      setError("Erro ao avaliar o serviço.");
     }
   };
 
   const columns = [
     { Header: "ID", accessor: "id", width: "5%" },
     { Header: "ID Serviço", accessor: "idServico", width: "5%" },
-    { Header: "ID Usuário", accessor: "idUsuario", width: "5%" },
+    { Header: "Nome do Prestador", accessor: "userProvider", width: "5%" },
+    { Header: "Nome do Solicitante", accessor: "userScheduler", width: "5%" },
     { Header: "Data", accessor: "data", width: "16.5%" },
     { Header: "Observações", accessor: "observacoes", width: "16.5%" },
     { Header: "Status", accessor: "status", width: "10%" },
@@ -57,44 +73,79 @@ export const MySchedules = () => {
   ];
 
   const rows = schedules.map((schedule) => {
-    console.log(schedule.id, schedule.approved);
+    let status;
+
+    switch (schedule.approved) {
+      case true:
+        status = "Aceito";
+        break;
+      case false:
+        status = "Desaprovado";
+        break;
+      default:
+        status = "Pendente";
+    }
+
+    const isProvider = decodedUser?.userId !== schedule?.schedulerUserId;
+    const isScheduler = decodedUser?.userId === schedule?.schedulerUserId;
+
     return {
       id: schedule.id,
       idServico: schedule.serviceId,
-      idUsuario: schedule.schedulerUserId,
+      userProvider: schedule.userProvider || "Usuário não identificado",
+      userScheduler: schedule.userScheduler || "Usuário não identificado",
       data: new Date(schedule.appointmentDate).toLocaleString(),
       observacoes: schedule.obs?.trim() || "Nenhuma observação",
-      status:
-        schedule.approved === true
-          ? "Aceito"
-          : schedule.approved === false
-          ? "Desaprovado"
-          : "Pendente",
+      status,
       acoes: (
         <>
-          <MDButton
-            color="success"
-            onClick={() => handleScheduleApproval(schedule.id, true)}
-            style={{
-              marginRight: "10px",
-              padding: "5px 10px",
-            }}
-          >
-            Aceitar
-          </MDButton>
-          <MDButton
-            color="error"
-            onClick={() => handleScheduleApproval(schedule.id, false)}
-            style={{
-              padding: "5px 10px",
-            }}
-          >
-            Desaprovar
-          </MDButton>
+          {isProvider && status === "Pendente" && (
+            <>
+              <MDButton
+                color="success"
+                onClick={() => handleScheduleApproval(schedule.id, true)}
+                style={{
+                  marginRight: "10px",
+                  padding: "5px 10px",
+                }}
+              >
+                Aceitar
+              </MDButton>
+              <MDButton
+                color="error"
+                onClick={() => handleScheduleApproval(schedule.id, false)}
+                style={{
+                  padding: "5px 10px",
+                }}
+              >
+                Desaprovar
+              </MDButton>
+            </>
+          )}
+          {isScheduler && status === "Aceito" && (
+            <Rating
+              name={`rating-${schedule.id}`}
+              value={schedule.average || 0}
+              onChange={(event, newValue) => {
+                if (newValue) giveScoreToService(schedule.serviceId, newValue);
+              }}
+              disabled={disabledRatings[schedule.serviceId]}
+            />
+          )}
         </>
       ),
     };
   });
+
+  useEffect(() => {
+    if (error || success) {
+      const timeout = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, success]);
 
   return (
     <DashboardLayout>
@@ -103,12 +154,16 @@ export const MySchedules = () => {
         {isLoading ? (
           <p>Carregando agendamentos...</p>
         ) : (
-          <DataTable
-            table={{
-              columns,
-              rows,
-            }}
-          />
+          <>
+            {error && <MDAlert color="error">{error}</MDAlert>}
+            {success && <MDAlert color="success">{success}</MDAlert>}
+            <DataTable
+              table={{
+                columns,
+                rows,
+              }}
+            />
+          </>
         )}
       </MDBox>
     </DashboardLayout>

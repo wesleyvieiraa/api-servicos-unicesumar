@@ -8,6 +8,7 @@ class ServiceSchedule {
     this.approved = dto.approved;
     this.userProvider = dto.user_provider || dto.userProvider;
     this.userScheduler = dto.user_scheduler || dto.userScheduler;
+    this.average = dto.average;
   }
 }
 

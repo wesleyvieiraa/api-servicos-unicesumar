@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDAlert from "components/MDAlert";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { useEffect, useState } from "react";
@@ -13,27 +14,37 @@ import ServiceInfo from "./components/ServiceInfo";
 export const EditService = (): JSX.Element => {
   const { serviceId } = useParams();
   const [service, setService] = useState();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const getServiceById = async () => {
       try {
         const { service } = await servicesService.getById(Number(serviceId));
         setService(service);
+        setErrorMessage(null);
       } catch (error) {
         setService(null);
-        console.error(error);
+        setErrorMessage("Ocorreu um erro ao carregar as informações do serviço. Tente novamente.");
       }
     };
 
     getServiceById();
-  }, []);
+  }, [serviceId]);
 
   const handleUpdate = () => {
     console.log("Atualizei");
   };
+
   return (
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviços" title="Editar Serviço" />
+      {errorMessage && (
+        <MDBox my={3}>
+          <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>
+            {errorMessage}
+          </MDAlert>
+        </MDBox>
+      )}
       {service && (
         <MDBox my={3}>
           <MDBox mb={6}>
