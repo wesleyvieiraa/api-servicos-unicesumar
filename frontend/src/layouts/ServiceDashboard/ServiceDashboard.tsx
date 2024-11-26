@@ -1,10 +1,10 @@
 import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDAlert from "components/MDAlert";
 import Footer from "examples/Footer";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import DataTable from "examples/Tables/DataTable";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import servicesService from "services/services-service";
@@ -15,9 +15,10 @@ import { Service } from "models/Service.model";
 
 export const ServiceDashboard = (): JSX.Element => {
   const { serviceId } = useParams();
-  const [service, setService] = useState({} as Service);
-  const [otherServicesList, setOtherServicesList] = useState<Service[]>([{}] as Service[]);
-  const [images, setImages] = useState({} as ServiceFile[]);
+  const [service, setService] = useState<Service | null>(null);
+  const [otherServicesList, setOtherServicesList] = useState<Service[] | null>([]);
+  const [images, setImages] = useState<ServiceFile[] | null>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getServiceById = async () => {
@@ -26,9 +27,9 @@ export const ServiceDashboard = (): JSX.Element => {
         setService(service);
         setImages(service.images);
       } catch (error) {
+        setError("Erro ao carregar os detalhes do serviço. Por favor, tente novamente.");
         setService(null);
         setImages(null);
-        console.error(error);
       }
     };
 
@@ -37,20 +38,34 @@ export const ServiceDashboard = (): JSX.Element => {
         const { services } = await servicesService.list(null, null, null, 1, false);
         setOtherServicesList(services);
       } catch (error) {
+        setError("Erro ao carregar outros serviços do mesmo prestador.");
         setOtherServicesList(null);
-        console.error(error);
       }
     };
 
     getServiceById();
     listOtherServices();
-  }, []);
+  }, [serviceId]);
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
 
   if (!service) {
     return (
       <DashboardLayout>
         <DashboardNavbar titleToBradcrumb="Serviços" title="Meus Serviços" />
         <MDBox py={3}>
+          {error && (
+            <MDBox mb={3}>
+              <MDAlert color="error">{error}</MDAlert>
+            </MDBox>
+          )}
           <MDTypography>Carregando informações...</MDTypography>
         </MDBox>
       </DashboardLayout>
@@ -61,6 +76,11 @@ export const ServiceDashboard = (): JSX.Element => {
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviços" title="Meus Serviços" />
       <MDBox py={3}>
+        {error && (
+          <MDBox mb={3}>
+            <MDAlert color="error">{error}</MDAlert>
+          </MDBox>
+        )}
         <Card sx={{ overflow: "visible" }}>
           <MDBox p={3}>
             <MDBox mb={3}>
@@ -70,7 +90,7 @@ export const ServiceDashboard = (): JSX.Element => {
             </MDBox>
 
             <Grid container spacing={3}>
-              {service && service.serviceId && (
+              {service.serviceId && (
                 <Grid item xs={12} lg={6} xl={5}>
                   <ServiceImages images={images} />
                 </Grid>
@@ -79,21 +99,6 @@ export const ServiceDashboard = (): JSX.Element => {
                 <ServiceInfo service={service} />
               </Grid>
             </Grid>
-            {/* {otherServicesList && otherServicesList.length > 0 && (
-              <MDBox mt={8} mb={2}>
-                <MDBox mb={1} ml={2}>
-                  <MDTypography variant="h5" fontWeight="medium">
-                    Outros serviços do mesmo prestador
-                  </MDTypography>
-                </MDBox>
-                <DataTable
-                  table={dataTableData}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  isSorted={false}
-                />
-              </MDBox>
-            )} */}
           </MDBox>
         </Card>
       </MDBox>

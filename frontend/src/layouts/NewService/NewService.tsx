@@ -1,10 +1,11 @@
 import { Card, Grid, Step, StepLabel, Stepper } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDAlert from "components/MDAlert";
 import Footer from "examples/Footer";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BasicInformations from "./components/BasicInformations";
 import Location from "./components/Location";
 import Details from "./components/Details";
@@ -39,6 +40,7 @@ function getStepContent(stepIndex: number, formData: any, setFieldValue: any): J
 
 export const NewService = (): JSX.Element => {
   const [activeStep, setActiveStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const steps = getSteps();
   const { formId, formField } = serviceForm;
   const currentValidation = validations[activeStep];
@@ -52,7 +54,7 @@ export const NewService = (): JSX.Element => {
 
       if (images && images.length > 0) {
         if (images.length > 5) {
-          console.error("É permitido no máximo de 5 imagens por vez.");
+          setError("É permitido no máximo 5 imagens por vez.");
           actions.setSubmitting(false);
           return;
         }
@@ -74,8 +76,8 @@ export const NewService = (): JSX.Element => {
       actions.resetForm();
       setActiveStep(0);
     } catch (error) {
+      setError("Erro ao cadastrar serviço. Por favor, tente novamente.");
       actions.setSubmitting(false);
-      console.error(error);
     }
   };
 
@@ -89,12 +91,26 @@ export const NewService = (): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
+
   return (
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviço" title="Novo Serviço" />
       <MDBox mb={9}>
         <Grid container justifyContent="center" alignItems="center" sx={{ height: "100%" }}>
           <Grid item xs={12} lg={8}>
+            {error && (
+              <MDBox mb={3}>
+                <MDAlert color="error">{error}</MDAlert>
+              </MDBox>
+            )}
             <Formik
               initialValues={initialValuesServiceForm}
               validationSchema={currentValidation}

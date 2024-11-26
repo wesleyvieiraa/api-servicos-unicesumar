@@ -3,11 +3,13 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import FormFieldFormik from "components/FormFieldFormik";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
+import { useState } from "react";
 import { Service } from "models/Service.model";
 import serviceForm from "layouts/NewService/schemas/serviceForm";
 import validations from "layouts/NewService/schemas/serviceValidations";
 import servicesService from "services/services-service";
 import MDButton from "components/MDButton";
+import MDAlert from "components/MDAlert";
 
 interface Props {
   service: Service;
@@ -19,6 +21,8 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
   const currentValidation = validations;
   const { name, price, description, categoryId } = formField;
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleSubmit = (values: Service, actions: FormikHelpers<Service>) => {
     submitForm(values, actions);
   };
@@ -27,10 +31,11 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
     try {
       await servicesService.update(values);
       actions.setSubmitting(false);
+      setErrorMessage(null);
       onUpdate();
     } catch (error) {
       actions.setSubmitting(false);
-      console.error(error);
+      setErrorMessage("Não foi possível salvar as alterações. Tente novamente.");
     }
   };
 
@@ -41,6 +46,13 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
           <Form id={formId} autoComplete="off">
             <MDBox p={3}>
               <MDTypography variant="h5">Informações do Serviço</MDTypography>
+              {errorMessage && (
+                <MDBox mt={2}>
+                  <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>
+                    {errorMessage}
+                  </MDAlert>
+                </MDBox>
+              )}
               <MDBox mt={1}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -88,7 +100,12 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
                   </Grid>
                   <Grid item xs={12}>
                     <MDBox display="flex" justifyContent="flex-end">
-                      <MDButton variant="gradient" color="dark" type="submit">
+                      <MDButton
+                        variant="gradient"
+                        color="dark"
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
                         salvar
                       </MDButton>
                     </MDBox>

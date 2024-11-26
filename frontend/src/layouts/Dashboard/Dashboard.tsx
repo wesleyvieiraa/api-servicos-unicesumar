@@ -3,6 +3,7 @@ import MDBox from "components/MDBox";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import MDAlert from "components/MDAlert";
 import { DashboardModel } from "models/dashboard.model";
 import { DashboardI } from "models/imp/dashboardI.model";
 import { useEffect, useState } from "react";
@@ -16,14 +17,16 @@ export const Dashboard = (): JSX.Element => {
   };
 
   const [totalValues, setTotalValues] = useState<DashboardModel>(new DashboardI());
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const getTotalValues = async () => {
       try {
         const { values } = await dashboardService.getTotalValues();
         setTotalValues(values);
+        setErrorMessage(null);
       } catch (error) {
-        console.error(error);
+        setErrorMessage("Ocorreu um erro ao carregar os dados do dashboard. Tente novamente.");
       }
     };
     getTotalValues();
@@ -33,6 +36,13 @@ export const Dashboard = (): JSX.Element => {
     <DashboardLayout>
       <DashboardNavbar title="Dashboard" />
       <MDBox mt={1.5}>
+        {errorMessage && (
+          <MDBox mb={3}>
+            <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>
+              {errorMessage}
+            </MDAlert>
+          </MDBox>
+        )}
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5} onClick={() => nav("/procurar-servico")} sx={{ cursor: "pointer" }}>

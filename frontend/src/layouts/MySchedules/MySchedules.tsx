@@ -7,10 +7,15 @@ import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { decodeJWT } from "utils/decode-jwt";
 import Rating from "@mui/material/Rating";
+import MDAlert from "components/MDAlert";
 
 export const MySchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [disabledRatings, setDisabledRatings] = useState<{ [key: number]: boolean }>({});
+
   const token = localStorage.getItem("token");
   const decodedUser = decodeJWT(token);
 
@@ -20,11 +25,11 @@ export const MySchedules = () => {
       if (response.schedules && Array.isArray(response.schedules)) {
         setSchedules(response.schedules);
       } else {
-        console.error("Formato inesperado da resposta:", response);
+        setError("Formato inesperado da resposta.");
         setSchedules([]);
       }
     } catch (error) {
-      console.error("Erro ao buscar agendamentos:", error);
+      setError("Erro ao buscar agendamentos.");
       setSchedules([]);
     } finally {
       setIsLoading(false);
@@ -38,23 +43,21 @@ export const MySchedules = () => {
   const handleScheduleApproval = async (scheduleId: number, approved: boolean) => {
     try {
       await servicesService.approveDisapproveSchedule(scheduleId, approved);
-      alert(`Agendamento ${approved ? "aceito" : "rejeitado"} com sucesso!`);
+      setSuccess(`Agendamento ${approved ? "aceito" : "rejeitado"} com sucesso!`);
       fetchSchedules();
     } catch (error) {
-      console.error("Erro ao atualizar o status do agendamento:", error);
-      alert("Não foi possível atualizar o status do agendamento. Tente novamente.");
+      setError("Erro ao atualizar o status do agendamento.");
     }
   };
 
   const giveScoreToService = async (serviceId: number, score: number) => {
     try {
-      console.log(score);
       await servicesService.giveScoreToService(serviceId, score);
-      alert("Avaliação registrada com sucesso!");
+      setSuccess("Avaliação registrada com sucesso!");
+      setDisabledRatings((prev) => ({ ...prev, [serviceId]: true }));
       fetchSchedules();
     } catch (error) {
-      console.error("Erro ao avaliar o serviço:", error);
-      alert("Não foi possível registrar sua avaliação. Tente novamente.");
+      setError("Erro ao avaliar o serviço.");
     }
   };
 
@@ -126,13 +129,23 @@ export const MySchedules = () => {
               onChange={(event, newValue) => {
                 if (newValue) giveScoreToService(schedule.serviceId, newValue);
               }}
-              disabled={schedule.average}
+              disabled={disabledRatings[schedule.serviceId]}
             />
           )}
         </>
       ),
     };
   });
+
+  useEffect(() => {
+    if (error || success) {
+      const timeout = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, success]);
 
   return (
     <DashboardLayout>
@@ -141,12 +154,16 @@ export const MySchedules = () => {
         {isLoading ? (
           <p>Carregando agendamentos...</p>
         ) : (
-          <DataTable
-            table={{
-              columns,
-              rows,
-            }}
-          />
+          <>
+            {error && <MDAlert color="error">{error}</MDAlert>}
+            {success && <MDAlert color="success">{success}</MDAlert>}
+            <DataTable
+              table={{
+                columns,
+                rows,
+              }}
+            />
+          </>
         )}
       </MDBox>
     </DashboardLayout>
