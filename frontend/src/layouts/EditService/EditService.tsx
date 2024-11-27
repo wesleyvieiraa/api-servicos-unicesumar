@@ -15,6 +15,7 @@ export const EditService = (): JSX.Element => {
   const { serviceId } = useParams();
   const [service, setService] = useState();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado de sucesso
 
   useEffect(() => {
     const getServiceById = async () => {
@@ -22,6 +23,7 @@ export const EditService = (): JSX.Element => {
         const { service } = await servicesService.getById(Number(serviceId));
         setService(service);
         setErrorMessage(null);
+        setSuccessMessage("Informações do serviço carregadas com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setService(null);
         setErrorMessage("Ocorreu um erro ao carregar as informações do serviço. Tente novamente.");
@@ -38,6 +40,13 @@ export const EditService = (): JSX.Element => {
   return (
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviços" title="Editar Serviço" />
+      {successMessage && (
+        <MDBox my={3}>
+          <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+            {successMessage}
+          </MDAlert>
+        </MDBox>
+      )}
       {errorMessage && (
         <MDBox my={3}>
           <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>

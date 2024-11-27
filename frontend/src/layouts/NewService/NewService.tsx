@@ -41,6 +41,7 @@ function getStepContent(stepIndex: number, formData: any, setFieldValue: any): J
 export const NewService = (): JSX.Element => {
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado de sucesso
   const steps = getSteps();
   const { formId, formField } = serviceForm;
   const currentValidation = validations[activeStep];
@@ -72,6 +73,7 @@ export const NewService = (): JSX.Element => {
         await servicesFileService.uploadImages(formData, service.serviceId);
       }
 
+      setSuccessMessage("Serviço cadastrado com sucesso!"); // Mensagem de sucesso
       actions.setSubmitting(false);
       actions.resetForm();
       setActiveStep(0);
@@ -106,6 +108,13 @@ export const NewService = (): JSX.Element => {
       <MDBox mb={9}>
         <Grid container justifyContent="center" alignItems="center" sx={{ height: "100%" }}>
           <Grid item xs={12} lg={8}>
+            {successMessage && (
+              <MDBox mb={3}>
+                <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+                  {successMessage}
+                </MDAlert>
+              </MDBox>
+            )}
             {error && (
               <MDBox mb={3}>
                 <MDAlert color="error">{error}</MDAlert>

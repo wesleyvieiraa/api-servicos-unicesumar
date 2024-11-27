@@ -19,6 +19,7 @@ export const MyServices = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado de sucesso
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
@@ -38,9 +39,10 @@ export const MyServices = (): JSX.Element => {
         );
 
         setServiceList(services);
-
         const calculatedTotalPages = Math.ceil(totalRows / itemsPerPage);
         setTotalPages(calculatedTotalPages);
+
+        setSuccessMessage("Serviços carregados com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setError("Erro ao buscar os serviços. Tente novamente mais tarde.");
       }
@@ -84,6 +86,13 @@ export const MyServices = (): JSX.Element => {
       <DashboardNavbar titleToBradcrumb="Serviços" title="Meus Serviços" />
       <MDBox py={3}>
         <MDBox mt={2}>
+          {successMessage && (
+            <MDBox mb={3}>
+              <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+                {successMessage}
+              </MDAlert>
+            </MDBox>
+          )}
           {error && (
             <MDBox mb={3}>
               <MDAlert color="error">{error}</MDAlert>

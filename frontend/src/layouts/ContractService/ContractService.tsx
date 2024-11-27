@@ -36,6 +36,7 @@ export const ContractService = (): JSX.Element => {
   const { serviceId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Adicionado estado de sucesso
   const steps = getSteps();
   const { formId, formField } = contractServiceForm;
   const currentValidation = validations[activeStep];
@@ -54,6 +55,7 @@ export const ContractService = (): JSX.Element => {
       actions.setSubmitting(false);
       actions.resetForm();
       setErrorMessage(null);
+      setSuccessMessage("Serviço contratado com sucesso!"); // Mensagem de sucesso
     } catch (error) {
       actions.setSubmitting(false);
       setErrorMessage("Ocorreu um erro ao contratar o serviço. Tente novamente.");
@@ -78,6 +80,13 @@ export const ContractService = (): JSX.Element => {
               <MDBox mb={3}>
                 <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>
                   {errorMessage}
+                </MDAlert>
+              </MDBox>
+            )}
+            {successMessage && ( // Exibe alerta se houver sucesso
+              <MDBox mb={3}>
+                <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+                  {successMessage}
                 </MDAlert>
               </MDBox>
             )}
