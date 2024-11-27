@@ -18,6 +18,7 @@ export const Dashboard = (): JSX.Element => {
 
   const [totalValues, setTotalValues] = useState<DashboardModel>(new DashboardI());
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Adicionado estado de sucesso
 
   useEffect(() => {
     const getTotalValues = async () => {
@@ -25,6 +26,7 @@ export const Dashboard = (): JSX.Element => {
         const { values } = await dashboardService.getTotalValues();
         setTotalValues(values);
         setErrorMessage(null);
+        setSuccessMessage("Dados carregados com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setErrorMessage("Ocorreu um erro ao carregar os dados do dashboard. Tente novamente.");
       }
@@ -36,6 +38,13 @@ export const Dashboard = (): JSX.Element => {
     <DashboardLayout>
       <DashboardNavbar title="Dashboard" />
       <MDBox mt={1.5}>
+        {successMessage && (
+          <MDBox mb={3}>
+            <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+              {successMessage}
+            </MDAlert>
+          </MDBox>
+        )}
         {errorMessage && (
           <MDBox mb={3}>
             <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>

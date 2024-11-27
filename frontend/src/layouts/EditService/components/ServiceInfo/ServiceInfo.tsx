@@ -22,6 +22,7 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
   const { name, price, description, categoryId } = formField;
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado de sucesso
 
   const handleSubmit = (values: Service, actions: FormikHelpers<Service>) => {
     submitForm(values, actions);
@@ -32,6 +33,7 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
       await servicesService.update(values);
       actions.setSubmitting(false);
       setErrorMessage(null);
+      setSuccessMessage("Alterações salvas com sucesso!"); // Mensagem de sucesso
       onUpdate();
     } catch (error) {
       actions.setSubmitting(false);
@@ -46,6 +48,13 @@ export const ServiceInfo = ({ service, onUpdate }: Props): JSX.Element => {
           <Form id={formId} autoComplete="off">
             <MDBox p={3}>
               <MDTypography variant="h5">Informações do Serviço</MDTypography>
+              {successMessage && (
+                <MDBox mt={2}>
+                  <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+                    {successMessage}
+                  </MDAlert>
+                </MDBox>
+              )}
               {errorMessage && (
                 <MDBox mt={2}>
                   <MDAlert color="error" dismissible onClose={() => setErrorMessage(null)}>

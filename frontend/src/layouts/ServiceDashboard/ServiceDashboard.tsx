@@ -19,6 +19,7 @@ export const ServiceDashboard = (): JSX.Element => {
   const [otherServicesList, setOtherServicesList] = useState<Service[] | null>([]);
   const [images, setImages] = useState<ServiceFile[] | null>([]);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado de sucesso
 
   useEffect(() => {
     const getServiceById = async () => {
@@ -26,6 +27,7 @@ export const ServiceDashboard = (): JSX.Element => {
         const { service } = await servicesService.getById(Number(serviceId));
         setService(service);
         setImages(service.images);
+        setSuccessMessage("Serviço carregado com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setError("Erro ao carregar os detalhes do serviço. Por favor, tente novamente.");
         setService(null);
@@ -76,6 +78,13 @@ export const ServiceDashboard = (): JSX.Element => {
     <DashboardLayout>
       <DashboardNavbar titleToBradcrumb="Serviços" title="Meus Serviços" />
       <MDBox py={3}>
+        {successMessage && (
+          <MDBox mb={3}>
+            <MDAlert color="success" dismissible onClose={() => setSuccessMessage(null)}>
+              {successMessage}
+            </MDAlert>
+          </MDBox>
+        )}
         {error && (
           <MDBox mb={3}>
             <MDAlert color="error">{error}</MDAlert>

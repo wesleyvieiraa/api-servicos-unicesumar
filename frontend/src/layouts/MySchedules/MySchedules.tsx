@@ -10,7 +10,23 @@ import Rating from "@mui/material/Rating";
 import MDAlert from "components/MDAlert";
 
 export const MySchedules = () => {
-  const [schedules, setSchedules] = useState([]);
+  type Schedule = {
+    id: number;
+    serviceId: number;
+    userProvider: string | null;
+    userScheduler: string | null;
+    appointmentDate: string;
+    obs?: string;
+    approved?: boolean;
+    userRating?: number; // Nota atribuída pelo usuário
+    schedulerUserId: number;
+  };
+
+  type ListMySchedulesResponse = {
+    schedules: Schedule[];
+  };
+
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -23,7 +39,11 @@ export const MySchedules = () => {
     try {
       const response = await servicesService.listMySchedules();
       if (response.schedules && Array.isArray(response.schedules)) {
-        setSchedules(response.schedules);
+        const updatedSchedules = response.schedules.map((schedule: Schedule) => ({
+          ...schedule,
+          userRating: schedule.userRating, // Rating atribuído pelo usuário ou 0
+        }));
+        setSchedules(updatedSchedules);
       } else {
         setError("Formato inesperado da resposta.");
         setSchedules([]);
@@ -54,8 +74,10 @@ export const MySchedules = () => {
     try {
       await servicesService.giveScoreToService(serviceId, score);
       setSuccess("Avaliação registrada com sucesso!");
+
+      await fetchSchedules();
+
       setDisabledRatings((prev) => ({ ...prev, [serviceId]: true }));
-      fetchSchedules();
     } catch (error) {
       setError("Erro ao avaliar o serviço.");
     }
@@ -125,11 +147,11 @@ export const MySchedules = () => {
           {isScheduler && status === "Aceito" && (
             <Rating
               name={`rating-${schedule.id}`}
-              value={schedule.average || 0}
+              value={schedule.userRating} // Exibe a avaliação atual
               onChange={(event, newValue) => {
                 if (newValue) giveScoreToService(schedule.serviceId, newValue);
               }}
-              disabled={disabledRatings[schedule.serviceId]}
+              disabled={!!disabledRatings[schedule.serviceId] || schedule.userRating > 0} // Garante desabilitação
             />
           )}
         </>
