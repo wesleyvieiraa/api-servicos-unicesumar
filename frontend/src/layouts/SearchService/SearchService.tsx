@@ -40,7 +40,6 @@ export const SearchService = (): JSX.Element => {
 
         setServiceList(services || []);
         setTotalPages(Math.ceil(totalRows / itemsPerPage)); // Calcular número total de páginas
-        setSuccessMessage("Serviços carregados com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setError("Erro ao buscar serviços. Por favor, tente novamente.");
       }

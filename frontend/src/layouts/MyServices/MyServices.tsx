@@ -41,8 +41,6 @@ export const MyServices = (): JSX.Element => {
         setServiceList(services);
         const calculatedTotalPages = Math.ceil(totalRows / itemsPerPage);
         setTotalPages(calculatedTotalPages);
-
-        setSuccessMessage("Serviços carregados com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setError("Erro ao buscar os serviços. Tente novamente mais tarde.");
       }

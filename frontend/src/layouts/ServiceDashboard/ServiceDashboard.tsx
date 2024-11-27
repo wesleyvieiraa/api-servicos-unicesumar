@@ -27,7 +27,6 @@ export const ServiceDashboard = (): JSX.Element => {
         const { service } = await servicesService.getById(Number(serviceId));
         setService(service);
         setImages(service.images);
-        setSuccessMessage("Serviço carregado com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setError("Erro ao carregar os detalhes do serviço. Por favor, tente novamente.");
         setService(null);

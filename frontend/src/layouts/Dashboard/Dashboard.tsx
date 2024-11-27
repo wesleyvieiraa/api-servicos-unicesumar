@@ -26,7 +26,6 @@ export const Dashboard = (): JSX.Element => {
         const { values } = await dashboardService.getTotalValues();
         setTotalValues(values);
         setErrorMessage(null);
-        setSuccessMessage("Dados carregados com sucesso!"); // Mensagem de sucesso
       } catch (error) {
         setErrorMessage("Ocorreu um erro ao carregar os dados do dashboard. Tente novamente.");
       }
